@@ -1,0 +1,24 @@
+<style lang="less">
+    
+</style>
+<template>
+    <view class="range-item">
+        {{data.username}}
+    </view>
+</template>
+<script>
+  import wepy from 'wepy'
+
+  export default class RangeList extends wepy.component {
+    props={
+        data: {
+            type: Object,
+            default:{}
+        }
+    }
+
+    onLoad () {
+        // console.log('data', this.data)
+    }
+  }
+</script>

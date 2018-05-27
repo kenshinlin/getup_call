@@ -1,0 +1,83 @@
+<style lang="less">
+	
+</style>
+<template>
+	<view class="banner">
+		
+	</view>
+	<view class="panel">
+		<button @tap="doCall">打卡</button>
+		<button @tap="join">报名</button>
+	</view>
+	<view class="panel">
+		<view class="menu">
+			<view>早起榜</view>
+			<view>坚持榜</view>
+		</view>
+		<view class="range-list-panel">
+			<rangelist :list.sync="rangeList"/>				
+		</view>
+	</view>
+</template>
+
+<script>
+	import wepy from 'wepy'
+  	import RangeList from '../components/RangeList'
+  	let nebulas = require("../libs/nebulas")
+	let Account = nebulas.Account
+	let neb = new nebulas.Neb()
+	neb.setRequest(new nebulas.HttpRequest("https://stu.kenniu.top/nahuo_nas"));
+
+	export default class Home extends wepy.page{
+		config={
+			navigationBarTitleText: 'Nas全民早起'
+		}
+
+		components={
+			rangelist: RangeList
+		}
+
+		data={
+			userInfo:{},
+			joinInfo:{},
+			rangeList: [{username:"abcd"}]
+		}
+
+		methods = {
+			doCall:function() {
+				
+			},
+
+			join:function(){
+
+			}
+		}
+
+		onLoad(){
+			this.$parent.inQueueForUserInfo(userInfo=>{
+				console.log("userInfo", userInfo)
+				this.userInfo=userInfo
+			})
+
+			this.$parent.inQueueForOpenID(openid=>this.fetchJoinInfo(openid))
+		}
+
+		fetchJoinInfo(openid){
+			let account = Account.NewAccount()
+
+			neb.api.call({
+				chainID:1,
+				from:account.getAddressString(),
+				to: '', //合约地址
+				value:0,
+				nonce:0,
+				gasPrice: 1000000,
+				gasLimit: 2000000,
+				contract:{
+					function: "userInfo",
+					args: '["'+openid+'"]'
+				}
+			}).then(joinInfo=>this.joinInfo=joinInfo)
+		}
+	}
+</script>

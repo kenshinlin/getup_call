@@ -1,0 +1,144 @@
+<style lang="less">
+.container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+}
+</style>
+
+<script>
+import wepy from 'wepy'
+import 'wepy-async-function'
+import {http} from './utils/index'
+
+import { setStore } from 'wepy-redux'
+import configStore from './store'
+
+const store = configStore()
+setStore(store)
+
+export default class extends wepy.app {
+    config = {
+        pages: [
+          'pages/home'
+        ],
+        window: {
+            backgroundTextStyle: 'light',
+            navigationBarBackgroundColor: '#fff',
+            navigationBarTitleText: 'WeChat',
+            navigationBarTextStyle: 'black'
+        }
+    }
+
+    globalData = {
+        userInfo: null
+    }
+
+    constructor () {
+        super()
+        this.use('requestfix')
+        this.use('promisify')
+        // this.proxyRequest()
+    }
+
+    // proxyRequest(){
+    //     this.intercept('request', {
+    //         // 发出请求时的回调函数
+    //         config(p){
+    //             return p
+    //         }
+
+    //         success(data){
+    //             return data
+    //         }
+    //     })
+    // }
+
+    onLaunch() {
+        this.runUserInfoHandlers()
+        this.runOpenIDHandlers()
+        this.testAsync()
+    }
+
+    sleep (s) {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve('promise resolved')
+            }, s * 1000)
+        })
+    }
+
+    async testAsync () {
+        const data = await this.sleep(3)
+        console.log(data)
+    }
+
+    queueForUserInfo = []
+    inQueueForUserInfo( handler ){
+        if ( typeof handler != "function" ){
+            return
+        }
+
+        let {userInfo} = this.globalData
+        if ( userInfo ){
+            return handler(userInfo)
+        }
+
+        this.queueForUserInfo.push(handler)
+    }
+
+    async runUserInfoHandlers(){
+        let userInfo = await wepy.getUserInfo()
+        userInfo = userInfo.userInfo
+        this.globalData.userInfo = userInfo
+
+        while( this.queueForUserInfo.length ){
+            let c = this.queueForUserInfo.shift()
+            if( typeof c === 'function' ){
+                c(userInfo)
+            }
+        }
+    }
+
+    queueForOpenID = []
+    inQueueForOpenID(handler){
+        if ( typeof handler != "function" ){
+            return
+        }
+
+        let {openID} = this.globalData
+        if ( openID ){
+            return handler(openID)
+        }
+
+        this.queueForOpenID.push(handler)
+    }
+
+    async runOpenIDHandlers(){
+        let {code} = await wepy.login()
+        let openID = await this.getOpenID(code)
+        this.globalData.openID = openID
+
+        while( this.queueForOpenID.length ){
+            let c = this.queueForOpenID.shift()
+            if( typeof c === 'function' ){
+                c(openID)
+            }
+        }
+    }
+
+    getOpenID(code){
+        return new Promise( (resolve, reject)=>{
+            http.get({
+                url: 'user/openid',
+                data: { code: code },
+                success: data => resolve( data.openid ),
+                error: e => reject(e)
+            }, this)
+        })
+    }
+}
+</script>

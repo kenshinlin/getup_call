@@ -1,0 +1,1 @@
+export const HOST = "https://stu.kenniu.top/nahuo_"

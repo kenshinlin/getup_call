@@ -1,0 +1,31 @@
+<style lang="less">
+    
+</style>
+<template>
+    <view class="range-list">
+        <repeat for="{{list}}">
+            <rangeitem :data.sync="item"/>
+        </repeat>
+    </view>
+</template>
+<script>
+  import wepy from 'wepy'
+  import RangeItem from './RangeItem'
+
+  export default class RangeList extends wepy.component {
+    props={
+        list: {
+            type: Array,
+            default:[]
+        }
+    }
+
+    components={
+        rangeitem: RangeItem
+    }
+
+    onLoad () {
+        // console.log('this.list', this.list)
+    }
+  }
+</script>
