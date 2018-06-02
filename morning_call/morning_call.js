@@ -2,10 +2,10 @@
 'use strict';
 
 var NAS_CELL = 1000000000000000000;
-var DEPOSIT_AMOUNT = 0.01; // 0.1NAS
-var DEPOSIT = new BigNumber(DEPOSIT_AMOUNT * NAS_CELL); // 0.1NAS
-var BROKEN_RAGE_AMOUNT = 0.001; //提成0.001NAS
-var BROKEN_RAGE = new BigNumber(BROKEN_RAGE_AMOUNT * NAS_CELL); //提成0.01NAS
+var DEPOSIT_AMOUNT = 0.0001; // 0.05NAS
+var DEPOSIT = new BigNumber(DEPOSIT_AMOUNT * NAS_CELL);
+var BROKEN_RAGE_AMOUNT = 0.00001; //提成0.01NAS
+var BROKEN_RAGE = new BigNumber(BROKEN_RAGE_AMOUNT * NAS_CELL);
 
 var CALL_START_HOUR = 6; // 开始打卡时间
 var CALL_END_HOUR = 8;	 //打卡结束时间
@@ -58,9 +58,10 @@ User.prototype = {
 };
 
 var MorningCall = function() {
+	LocalContractStorage.defineProperty(this, "adminAddress");
 
-	//正在挑战的用户
-	LocalContractStorage.defineProperty(this, "challengeUserPoolSize");
+    //正在挑战的用户
+    LocalContractStorage.defineProperty(this, "challengeUserPoolSize");
 	LocalContractStorage.defineMapProperty(this, 'challengeUserPoolArrayMap')
 	LocalContractStorage.defineMapProperty(this, 'challengeUserPool');
 
@@ -183,6 +184,7 @@ MorningCall.prototype = {
 
     	var ret = Blockchain.transfer(this.adminAddress, BROKEN_RAGE) //提成
 
+
     	if (!ret) {
             Event.Trigger("payDepositBrokenrageError", {
                 Transfer: {
@@ -207,31 +209,30 @@ MorningCall.prototype = {
     /**
      * 打卡
      */
-    doCall: function() {
-        var from = Blockchain.transaction.from;
+    doCall: function(address) {
         var value = Blockchain.transaction.value;
-        var user = this.userPool.get(from)
+        var user = this.userPool.get(address)
 
         if (value != 0) {
             throw new Error("打卡无需支付任何NAS");
         }
 
-        if( !this._inCallTime() ){
-        	throw new Error("请在上午6点到8点之间打卡")
-        }
+        // if( !this._inCallTime() ){
+        // 	throw new Error("请在上午6点到8点之间打卡")
+        // }
 
-        if ( !this._isUserInChallenge(from) ) {
+        if ( !this._isUserInChallenge(address) ) {
             throw new Error("未支付挑战金，或挑战失败后未重新支付，不能打卡");
         }
 
-        if( this._inCallTime(user.callAt) ){
-        	throw new Error("一天只能打卡一次");
-        }
+        // if( this._inCallTime(user.callAt) ){
+        // 	throw new Error("一天只能打卡一次");
+        // }
 
         user.callAt = new Date();
         user.callRecords.push({t:today()});
 
-        this.userPool.set(from, user);
+        this.userPool.set(address, user);
     },
 
     /**
@@ -240,13 +241,13 @@ MorningCall.prototype = {
     charge:function(){
     	var value = Blockchain.transaction.value;
 
-        if (value != 0) {
-            throw new Error("结算无需支付任何NAS");
-        }
+        // if (value != 0) {
+        //     throw new Error("结算无需支付任何NAS");
+        // }
 
-        if( !this._inChargeTime() ){
-        	throw new Error("不在结算时间内")
-        }
+        // if( !this._inChargeTime() ){
+        // 	throw new Error("不在结算时间内")
+        // }
 
         var challengeFailUserList = [];
         var challengeSuccUserList = [];
@@ -300,8 +301,7 @@ MorningCall.prototype = {
         }
     },
 
-    userInfo:function(openid){
-    	var address = this.userOpenidArrayMap.get(openid)
+    userInfo:function(address){
     	var user = this.userPool.get(address)
     	if( user ){
     		user.inChallenge = this._isUserInChallenge(user.address)
@@ -312,8 +312,7 @@ MorningCall.prototype = {
     /**
      * 我的打卡记录
      */
-    myCallList:function(openid){
-    	var address = this.userOpenidArrayMap.get(openid);
+    myCallList:function(address){
     	var user = this.userPool.get(address);
 
     	if( user ){
@@ -327,8 +326,7 @@ MorningCall.prototype = {
     /**
      * 我的挑战金记录
      */
-    myPayList:function(openid){
-    	var address = this.userOpenidArrayMap.get(openid);
+    myPayList:function(address){
     	var user = this.userPool.get(address);
 
     	if( user ){
@@ -382,25 +380,27 @@ MorningCall.prototype = {
     },
 
     _putUserPool:function(user) {
-    	var isExist = this._isUserAddressExists(user.from)
+    	var isExist = this._isUserAddressExists(user.address)
 
     	// 不存在该用户
     	if( !isExist ){
 	    	var index = this.userPoolSize;
-	    	this.userPoolArrayMap.set(index, user.from);
-	    	this.userOpenidArrayMap.set(user.openid, user.from);
-	    	this.userPool.put( user.from, user )
+	    	this.userPoolArrayMap.set(index, user.address);
+            if( user.openid ){
+    	    	this.userOpenidArrayMap.set(user.openid, user.address);
+            }
+	    	this.userPool.put( user.address, user )
 	    	this.userPoolSize++;
     	}else{
-	    	this.userPool.set( user.from, user )
+	    	this.userPool.set( user.address, user )
     	}
 
     },
 
     _putChallengeUserPool:function(user) {
     	var index = this.challengeUserPoolSize;
-    	this.challengeUserPoolArrayMap.set(index, user.from)
-    	this.challengeUserPool.put( user.from, user.from ) 
+    	this.challengeUserPoolArrayMap.set(index, user.address)
+    	this.challengeUserPool.put( user.address, user.address ) 
     	this.challengeUserPoolSize++;
     },
 
@@ -419,7 +419,7 @@ MorningCall.prototype = {
     	callEndTime.setMilliseconds(0);
 
     	var callStartTime = new Date();
-    	callStartTime.setHours(CALL_END_HOUR);
+    	callStartTime.setHours(CALL_START_HOUR);
     	callStartTime.setMinutes(0);
     	callStartTime.setSeconds(0);
     	callStartTime.setMilliseconds(0);
