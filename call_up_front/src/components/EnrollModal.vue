@@ -9,6 +9,7 @@
       :mask-closable="false"
       :loading="modalLoading">
       <div>
+        <upload-avatar v-model="avatar"/>
         <Form :label-width="50">
           <FormItem label="用户名" class="form-item">
             <Input placeholder="输入用户名" v-model="username"/>
@@ -41,16 +42,20 @@
   import Vue from 'vue'
   import {DEPOSIT_AMOUNT} from '../constants/'
   import {callContract} from '../utils/'
+  import UploadAvatar from '@/components/UploadAvatar'
 
   export default {
     props:['value'],
     data(){
       return {
         username:"",
+        avatar:'',
         modalLoading:true,
         deposit:DEPOSIT_AMOUNT
       }
     },
+
+    components:{ UploadAvatar},
     computed:{
       visible(){
         return this.value
@@ -67,16 +72,22 @@
           this.modalLoading = false
           Vue.nextTick().then(()=>this.modalLoading=true)
           return this.$Message.error('请输入用户名')
-        }else{
-          this.enroll()
         }
+        
+        if( !this.avatar ){
+          this.modalLoading = false
+          Vue.nextTick().then(()=>this.modalLoading=true)
+          return this.$Message.error('请上传头像')
+        }
+        this.enroll()
       },
 
       enroll(){
         let username = this.username
+        let avatar = this.avatar
         let value = DEPOSIT_AMOUNT
         let callFunction = "payDeposit"
-        let args =  [username]
+        let args =  [username, avatar]
 
         callContract({
           value,

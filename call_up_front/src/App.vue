@@ -24,6 +24,7 @@ export default {
 .text-gray{color: #8590a6;}
 .text-danger{color:#ed3f14;}
 .text-large{font-size: 24px;}
+.text-center{text-align:center;}
 .no-margin-top{margin-top: 0;}
 
 </style>

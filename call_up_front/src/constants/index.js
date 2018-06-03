@@ -15,3 +15,5 @@ export const NET_HOST = netHost
 
 export const CALLBACK_URL = callbackUrl
 
+export const IMG_HOST = "//kk.kenniu.top"
+
