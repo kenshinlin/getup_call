@@ -1,19 +1,31 @@
 import NebPay from 'nebpay.js'
 
-export const CONTRACT_ADDR = "n1hk24FfeWVUvkNWB1rFjjyAvs2gyYn6fVF" //合约地址
-export const DEPOSIT_AMOUNT = 0.0001 //保证金
-export const BROKEN_RAGE_AMOUNT = 0.00001 //提成
+// export const CONTRACT_ADDR = "n1iXfMNAsrerKzHFZjYXJUATtZpo6zLqEau" //测试网地址
+export const CONTRACT_ADDR = "n1ectqLgB8KB8a1LpezQmR6puusf53s8G98" //合约地址
+
+let depositAmount = 0.0001 //保证金
+let brokenRangeAmount = 0.00001 //提成
 
 let netHost = "https://testnet.nebulas.io"
 let callbackUrl = NebPay.config.testnetUrl
+let callEndHour = 11
+let callStartHour = 6
 
-if( process.env.NODE_ENV === 'production' ){
+if( true || process.env.NODE_ENV === 'production' ){
   netHost = "https://mainnet.nebulas.io"
   callbackUrl = NebPay.config.mainnetUrl
+  depositAmount = 0.05
+  brokenRangeAmount = 0.01
+  callEndHour = 9
 }
+export const CALL_START_HOUR = callStartHour
+export const CALL_END_HOUR = callEndHour
+export const DEPOSIT_AMOUNT = depositAmount
+export const BROKEN_RAGE_AMOUNT = brokenRangeAmount
 export const NET_HOST = netHost
 
 export const CALLBACK_URL = callbackUrl
 
 export const IMG_HOST = "//kk.kenniu.top"
+
 

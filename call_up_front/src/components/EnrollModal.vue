@@ -7,7 +7,9 @@
       @on-ok="ok" 
       ok-text="支付"
       :mask-closable="false"
-      :loading="modalLoading">
+      :loading="modalLoading"
+      class-name="vertical-center-modal"
+      >
       <div>
         <upload-avatar v-model="avatar"/>
         <Form :label-width="50">

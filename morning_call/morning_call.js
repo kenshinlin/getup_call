@@ -6,8 +6,7 @@
  */
 
 var ENV = 'dev'
-
-// ENV = 'prod'
+ENV = 'prod'
 
 var IS_PROD = ENV==='prod'
 
@@ -184,6 +183,7 @@ MorningCall.prototype = {
     	}
 
 		user.payDepositAt = now;
+		user.avatar = avatar;
 		user.payRecords.push(now);
 
 		// 在打卡时间内，则自动打卡
@@ -244,7 +244,7 @@ MorningCall.prototype = {
 
 		// 开发环境不限制打卡时间
         if( IS_PROD && !this._inCallTime() ){
-        	throw new Error("请在上午6点到8点之间打卡")
+        	throw new Error("请在北京时间上午6点到9点之间打卡")
         }
 
         if ( !this._isUserInChallenge(address) ) {
@@ -363,7 +363,22 @@ MorningCall.prototype = {
     		user.inChallenge = this._isUserInChallenge(user.address)
     	}
     	return user
-    },
+	},
+	
+	prizePool:function(){
+		var pool = []
+		for(var i=0;i<this.challengeUserPoolSize;i++){
+        	var fromUserAddr = this.challengeUserPoolArrayMap.get(i);
+			
+        	if( fromUserAddr ){
+				var user = this.userPool.get(fromUserAddr);
+				if( user ){
+					pool.push(user)	
+				}
+			}
+		}
+		return pool
+	},
 
     /**
      * 我的打卡记录
@@ -403,11 +418,8 @@ MorningCall.prototype = {
     		address = this.userPoolArrayMap.get(i);
     		user = this.userPool.get(address);
     		if( user ){
-    			userList.push({
-    				username: user.username,
-    				avatar: user.avatar,
-    				callTimes: user.callRecords.length
-    			});
+				user.callTimes = user.callRecords.length
+    			userList.push(user);
     		}
     	}
 

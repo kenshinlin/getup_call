@@ -1,20 +1,53 @@
 <template>
   <div>
-    <div>{{address}}</div>
-    <div style="word-break:break-all;height:100px;overflow:auto;">{{JSON.stringify(userInfo)}}</div>
-    <div>
-      <Button type="warning" shape="circle" @click="enroll">报名</Button>
-      <Button 
-        type="warning" 
-        shape="circle" 
-        @click="selectAddress">签到</Button>
+    <div class="page-header">
+      <div class="logo">
+        <img src="../assets/logo.png"/>
+        <span>全民早起</span>
+      </div>
+      <div>
+        <banner :data="prizePool"/>
+        <div>
+          <Button type="warning" shape="circle" @click="enroll">报名</Button>
+          <Button 
+            type="warning" 
+            shape="circle" 
+            @click="selectAddress">打卡</Button>
+        </div>
+        <p style="padding-top:8px;" @click="showRule">
+          <span>游戏规则</span> <Icon type="help-circled"></Icon>
+        </p>
+        <charge-result :data="chargeResultData||{}"/>
+      </div>
+      <div class="bg">
+        <img src="../assets/banner2.jpg" />
+      </div>
     </div>
-    <div>
-      榜单
-      <range-list :list="range"/>
+    <div style="width:256px;margin:0 auto;">
+      <Tabs v-model="selectTab">
+        <TabPane name="rank" label="坚持榜"><range-list v-show="selectTab=='rank'" :list="range"/></TabPane>
+        <TabPane name="challenger" label="挑战者"><range-list v-show="selectTab=='challenger'" :list="prizePool"/></TabPane>
+        <TabPane name="me" v-show="selectTab=='me'"  label="我的"><user-info :data="userInfo"/></TabPane>
+      </Tabs>
     </div>
     <simple-address-selector v-model="showAddressSelector" @complete="fetchData"/>
     <enroll-modal v-model="showEnrollModal" @complete="fetchData"/>
+    <Modal 
+      v-model="ruleVisible"
+      title="全民早起游戏规则" 
+      :mask-closable="false"
+      class-name="vertical-center-modal"
+      >
+        <ol style="padding:12px;">
+          <li>每天北京时间6点到9点打卡有效</li>
+          <li>报名需支付挑战金，挑战金不退还，报名后第二天开始打卡</li>
+          <li>每天打卡一次，打卡可获得奖金</li>
+          <li>一旦中断打卡，你的挑战金将被当天打卡的人平分</li>
+          <li>平台收取10%挑战金</li>          
+        </ol>
+      <div slot="footer"></div>
+    </Modal>
+    <app-footer />
   </div>
 </template>
 
@@ -23,8 +56,13 @@
 import SimpleAddressSelector from '@/components/SimpleAddressSelector'
 import EnrollModal from '@/components/EnrollModal'
 import RangeList from '@/components/RangeList'
-import {simulateCall} from '../utils/'
+import Banner from '@/components/Banner'
+import ChargeResult from '@/components/ChargeResult'
+import UserInfo from '@/components/UserInfo'
+import AppFooter from '@/components/AppFooter'
+import {simulateCall, today, isWechat} from '../utils/'
 import Cookies from 'js-cookie'
+import { CALL_END_HOUR } from '../constants/'
 
 export default {
   name: 'HomePage',
@@ -34,14 +72,23 @@ export default {
       showEnrollModal:false,
       address: Cookies.get('nas_wallet_address'),
       range:[], //排行榜
-      userInfo:{}
+      userInfo:{},
+      prizePool: [],
+      todayhargeResult:{},
+      yesterdayChargeResult:{},
+      selectTab: 'rank',
+      ruleVisible:false
     }
   },
 
   components:{
     SimpleAddressSelector,
     EnrollModal,
-    RangeList
+    RangeList,
+    Banner,
+    ChargeResult,
+    UserInfo,
+    AppFooter
   },
   mounted(){
     this.fetchData()
@@ -50,28 +97,76 @@ export default {
       duration: 5
     })
   },
+
+  computed:{
+    chargeResultData(){
+      let now = new Date()
+      let hour = now.getHours()
+
+      let hasCharge = hour > CALL_END_HOUR
+      return hasCharge?this.todayChargeResult:this.yesterdayChargeResult
+    }
+  },
+
   methods:{
+    showRule(){this.ruleVisible=true},
     enroll(){
+      if( isWechat() ){
+        this.$Message.info('请在手机或PC浏览器打开，不要在微信打开')
+      }
       this.showEnrollModal = true
     },
 
     selectAddress(){
+      if( isWechat() ){
+        this.$Message.info('请在手机或PC浏览器打开，不要在微信打开')
+      }
       this.showAddressSelector = true
     },
 
     fetchData(){
       this.fetchRange()
       this.fetchUserInfo()
+      this.fetchPrizePool()
+      this.fetchChargeResult()
+    },
+
+    fetchChargeResult(){
+      let now = new Date()
+      let hour = now.getHours()
+
+      let hasCharge = hour > CALL_END_HOUR
+
+      let day
+      if( hasCharge ){
+        day = today()
+      }else{
+        let t = new Date( now.getTime() - 24*60*60*1000 )
+        day = today(t)
+      }
+
+      simulateCall({function:"dayChargeInfo", args:[day]}).then(result=>{
+        if( hasCharge ){
+          this.todayChargeResult = result
+        }else{
+          this.yesterdayChargeResult = result
+        }
+      })
     },
 
     fetchRange(){
       simulateCall({function:"range"}).then(range=>this.range=range)
     },
+
+    fetchPrizePool(){
+      simulateCall({function:"prizePool"}).then(prizePool=>this.prizePool=prizePool)
+    },
+
     fetchUserInfo(){
       let address = this.address
       if( address ){
         simulateCall({function:"userInfo", args:[address]}).then(userInfo=>{
-          this.userInfo=userInfo
+          this.userInfo=userInfo||{}
           console.log('fetchUserInfo', userInfo)
         })
       }
@@ -79,3 +174,51 @@ export default {
   }
 }
 </script>
+<style>
+.page-header{
+  /* background: #f7f7f7; */
+  border-bottom: 1px solid rgba(26,26,26,.06);
+  box-shadow: 0 1px 3px 0 rgba(23,81,153,.05);
+  /* background-image:url('../assets/banner2.jpg'); */
+  color:#FFF;
+  font-weight:bold;
+  position:relative;
+}
+.page-header .bg{
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	overflow: hidden;
+  z-index:-1;
+}
+
+.page-header .bg img{
+  width: 100%;
+	height: 100%;
+	object-fit: cover;
+	-webkit-filter: blur(5px); /* Chrome, Opera */
+       -moz-filter: blur(5px);
+        -ms-filter: blur(5px);    
+            filter: blur(5px);
+}
+
+.logo{
+  position:absolute;
+  left:3px;
+  top:3px;
+
+  background:#555;
+  border-radius:4px;
+  color:#FFF;
+  font-weight:bold;
+  font-size:12px;
+  padding:3px 3px 2px;
+}
+.logo img{
+  width:20px;
+  height:20px;
+  vertical-align:middle;
+}
+</style>

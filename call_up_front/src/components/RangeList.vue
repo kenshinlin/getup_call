@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="range-list">
         <range-item v-for="(item, index) in list " :key="item.username" :data="item" :index="index"/>
     </div>
 </template>
@@ -14,3 +14,9 @@
     }
   }
 </script>
+
+<style>
+.range-list{
+  min-height: 170px;
+}
+</style>

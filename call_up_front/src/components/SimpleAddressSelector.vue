@@ -6,7 +6,9 @@
       title="输入钱包地址" 
       @on-ok="ok" 
       :mask-closable="false"
-      :loading="modalLoading">
+      :loading="modalLoading"
+      class-name="vertical-center-modal"
+      >
       <div>
         <!-- <Form :label-width="40">
           <FormItem label="地址" class="form-item">
@@ -15,7 +17,7 @@
           </FormItem>
         </Form> -->
         <Alert type="warning" show-icon>
-          签到提示
+          打卡提示
           <template slot="desc">
             <p>
               <p v-show="address.length>0">
@@ -51,7 +53,7 @@
     props:['value'],
     data(){
       return {
-        address: Cookies.get('nas_wallet_address'),
+        address: Cookies.get('nas_wallet_address')||'',
         modalLoading:true
       }
     },
@@ -84,12 +86,12 @@
           function: callFunction,
           args,
           success: txInfo=>{
-            this.$Message.info("签到成功")
+            this.$Message.info("打卡成功")
             this.$emit('input',false)
             this.$emit('complete')            
           },
           error: msg=>{
-            this.$Message.error('签到失败，'+msg)
+            this.$Message.error('打卡失败，'+msg)
             this.modalLoading = false
             Vue.nextTick().then(()=>this.modalLoading=true)
           }

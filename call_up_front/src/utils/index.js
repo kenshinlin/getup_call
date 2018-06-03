@@ -71,4 +71,32 @@ const queryTxResult = (hash, success, errCB)=>{
       }
     })
 }
-    
+
+export const today = ( t )=>{
+	let now = t||new Date()
+	return [now.getFullYear(), toDateNumString(now.getMonth()+1), toDateNumString(now.getDate())].join('-')
+}
+
+export const toDateNumString = (num)=>('000'+num).substr(-2)
+
+export const formatTime = (date, needTime=false)=>{
+	date = new Date(date) || new Date
+	var year = date.getFullYear()
+	var month = date.getMonth() + 1
+	var day = date.getDate()
+
+	var hour = date.getHours()
+	var minute = date.getMinutes()
+	var second = date.getSeconds()
+
+	if( needTime === true){
+		return [year, ...[month, day].map(toDateNumString)].join('-') + ' ' + [hour, minute].map(toDateNumString).join(':')		
+	}
+	return [year, ...[month, day].map(toDateNumString)].join('-')
+}
+
+export const isWechat = ()=>{
+  var ua = window.navigator.userAgent.toLowerCase();
+  //通过正则表达式匹配ua中是否含有MicroMessenger字符串
+  return ua.match(/MicroMessenger/i) == 'micromessenger'
+}
