@@ -19,7 +19,7 @@ export default {
   color: #2c3e50;
   margin-top: 60px;
 }
-
+.word-break{word-break:break-all;}
 .text-link{ color: #175199; outline: none;}
 .text-gray{color: #8590a6;}
 .text-danger{color:#ed3f14;}

@@ -6,6 +6,7 @@
       title="报名确认" 
       @on-ok="ok" 
       ok-text="支付"
+      :mask-closable="false"
       :loading="modalLoading">
       <div>
         <Form :label-width="50">
@@ -84,6 +85,7 @@
           success: txInfo=>{
             this.$Message.info('支付成功')
             this.$emit('input',false)
+            this.$emit('complete')
           },
           error: msg=>{
             this.$Message.error('支付失败，'+msg)

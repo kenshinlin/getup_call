@@ -5,17 +5,38 @@
       @input="$emit('input', $event)"
       title="输入钱包地址" 
       @on-ok="ok" 
+      :mask-closable="false"
       :loading="modalLoading">
       <div>
-        <Form :label-width="40">
+        <!-- <Form :label-width="40">
           <FormItem label="地址" class="form-item">
+
             <Input placeholder="输入钱包地址" v-model="address"/>
           </FormItem>
-        </Form>
-        <a target="_blank" href="https://nano.nebulas.io/index_cn.html">
-          <Icon type="ios-information"></Icon>
-          下载NAS App注册钱包
-        </a>
+        </Form> -->
+        <Alert type="warning" show-icon>
+          签到提示
+          <template slot="desc">
+            <p>
+              <p v-show="address.length>0">
+                <span>上次操作钱包地址：</span>
+                <p class="text-danger word-break">{{address}}</p>
+              </p>
+            </p>
+            <p>
+              移动端请先
+              <a target="_blank" href="https://nano.nebulas.io/index_cn.html">
+                下载NAS nano
+              </a>
+            </p>
+            <p>
+              PC端请先
+              <a target="_blank" href="https://github.com/ChengOrangeJu/WebExtensionWallet">
+                安装钱包插件
+              </a>
+            </p>
+          </template>
+        </Alert>
       </div>
     </Modal>
   </div>
@@ -65,6 +86,7 @@
           success: txInfo=>{
             this.$Message.info("签到成功")
             this.$emit('input',false)
+            this.$emit('complete')            
           },
           error: msg=>{
             this.$Message.error('签到失败，'+msg)

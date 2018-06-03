@@ -7,15 +7,14 @@
       <Button 
         type="warning" 
         shape="circle" 
-        @complete="fetchUserInfo"
         @click="selectAddress">签到</Button>
     </div>
     <div>
-      榜单4
+      榜单
       <range-list :list="range"/>
     </div>
-    <simple-address-selector v-model="showAddressSelector"/>
-    <enroll-modal v-model="showEnrollModal"/>
+    <simple-address-selector v-model="showAddressSelector" @complete="fetchData"/>
+    <enroll-modal v-model="showEnrollModal" @complete="fetchData"/>
   </div>
 </template>
 
@@ -45,8 +44,7 @@ export default {
     RangeList
   },
   mounted(){
-    this.fetchRange()
-    this.fetchUserInfo()
+    this.fetchData()
     this.$Message.config({
       top: 80,
       duration: 5
@@ -61,13 +59,21 @@ export default {
       this.showAddressSelector = true
     },
 
+    fetchData(){
+      this.fetchRange()
+      this.fetchUserInfo()
+    },
+
     fetchRange(){
       simulateCall({function:"range"}).then(range=>this.range=range)
     },
     fetchUserInfo(){
       let address = this.address
       if( address ){
-        simulateCall({function:"userInfo", args:[address]}).then(userInfo=>this.userInfo=userInfo)
+        simulateCall({function:"userInfo", args:[address]}).then(userInfo=>{
+          this.userInfo=userInfo
+          console.log('fetchUserInfo', userInfo)
+        })
       }
     }
   }
