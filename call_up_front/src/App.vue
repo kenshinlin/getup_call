@@ -42,8 +42,8 @@ export default {
 }
 
 .avatar{
-  width: 40px;
-  height:40px;
+  width: 30px;
+  height:30px;
   object-fit:cover;
   border-radius:4px;
   vertical-align:middle;
@@ -52,4 +52,25 @@ export default {
 
 .float-left{float:left;}
 .float-right{float:right;}
+
+div.ivu-modal-footer{
+  display: flex;
+  padding: 0;
+}
+div.ivu-modal-footer>button{
+  flex: 1;
+}
+
+div.ivu-modal-footer>button:first-child{
+  border-radius: 0 0 0 4px;
+}
+div.ivu-modal-footer>button:last-child{
+  border-radius: 0 0 4px 0;
+}
+
+div.ivu-modal-body{
+  padding: 8px;
+}
+div .ivu-modal-close{top:3px;}
+div.ivu-modal-header{padding: 10px 12px;}
 </style>

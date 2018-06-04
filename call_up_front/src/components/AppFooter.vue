@@ -1,15 +1,39 @@
 <template>
-  <div class="footer">
+  <div :class="classObject">
     <p> © 2018 NAS 全民早起</p>
     <p>商务合作：kenshinlin@foxmail.com</p>
     <p>地址：深圳市南山区 </p>
   </div>
 </template>
+<script>
+export default{
+  props:['fixFooter', 'check'],
+  computed:{
+    classObject(){
+      return {
+        fix: this.fixFooter,
+        footer: true, 
+        hidden: this.check&&false
+      }
+    }
+  }
+}
+</script>
 <style>
 .footer{
   margin-top:14px;
   background:#555;
   padding:12px;
   color:#FFF;
+}
+.fix{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+
+.hidden{
+  visibility: hidden;
 }
 </style>

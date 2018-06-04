@@ -8,8 +8,9 @@
       <div>
         <banner :data="prizePool"/>
         <div>
-          <Button type="warning" shape="circle" @click="enroll">报名</Button>
+          <Button class="enroll-btn" type="warning" shape="circle" @click="enroll">报名</Button>
           <Button 
+            class="call-btn"
             type="warning" 
             shape="circle" 
             @click="selectAddress">打卡</Button>
@@ -23,12 +24,17 @@
         <img src="../assets/banner2.jpg" />
       </div>
     </div>
-    <div style="width:256px;margin:0 auto;">
-      <Tabs v-model="selectTab">
-        <TabPane name="rank" label="坚持榜"><range-list v-show="selectTab=='rank'" :list="range"/></TabPane>
-        <TabPane name="challenger" label="挑战者"><range-list v-show="selectTab=='challenger'" :list="prizePool"/></TabPane>
-        <TabPane name="me" v-show="selectTab=='me'"  label="我的"><user-info :data="userInfo"/></TabPane>
-      </Tabs>
+    <div>
+      <ul class="tabs">
+        <li @click="changeTab('rank')" :class="[selectTab=='rank'?'on':'']">坚持榜</li>
+        <li @click="changeTab('challenge')" :class="[selectTab=='challenge'?'on':'']">挑战者</li>
+        <li @click="changeTab('me')" :class="[selectTab=='me'?'on':'']">我的</li>
+      </ul>
+    </div>
+    <div>
+      <range-list v-show="selectTab=='rank'" :list="range"/>
+      <range-list v-show="selectTab=='challenge'" :list="prizePool"/>
+      <user-info v-show="selectTab=='me'" :data="userInfo" @changetab="checkFooterFix"/>
     </div>
     <simple-address-selector v-model="showAddressSelector" @complete="fetchData"/>
     <enroll-modal v-model="showEnrollModal" @complete="fetchData"/>
@@ -47,7 +53,7 @@
         </ol>
       <div slot="footer"></div>
     </Modal>
-    <app-footer />
+    <app-footer :fixFooter="fixFooter" :check="check" />
   </div>
 </template>
 
@@ -77,7 +83,9 @@ export default {
       todayhargeResult:{},
       yesterdayChargeResult:{},
       selectTab: 'rank',
-      ruleVisible:false
+      ruleVisible:false,
+      fixFooter:false,
+      check:true
     }
   },
 
@@ -96,6 +104,7 @@ export default {
       top: 80,
       duration: 5
     })
+    this.checkFooterFix()
   },
 
   computed:{
@@ -109,6 +118,10 @@ export default {
   },
 
   methods:{
+    changeTab(selectTab){
+      this.selectTab = selectTab
+      this.checkFooterFix()
+    },
     showRule(){this.ruleVisible=true},
     enroll(){
       if( isWechat() ){
@@ -170,6 +183,16 @@ export default {
           console.log('fetchUserInfo', userInfo)
         })
       }
+    },
+    checkFooterFix(){
+      // this.fixFooter = false
+      this.check = true
+      window.setTimeout(()=>{
+        let screenHeight = window.screen.availHeight
+        let bodyHeight = document.body.getBoundingClientRect().height
+        this.fixFooter = screenHeight - bodyHeight > 5 
+        this.check = false
+      }, 300)
     }
   }
 }
@@ -181,7 +204,7 @@ export default {
   box-shadow: 0 1px 3px 0 rgba(23,81,153,.05);
   /* background-image:url('../assets/banner2.jpg'); */
   color:#FFF;
-  font-weight:bold;
+  /* font-weight:bold; */
   position:relative;
 }
 .page-header .bg{
@@ -220,5 +243,30 @@ export default {
   width:20px;
   height:20px;
   vertical-align:middle;
+}
+
+.call-btn, .enroll-btn{
+  padding-left: 24px;
+  padding-right: 24px;
+}
+.enroll-btn{margin-right: 18px;}
+.tabs{
+  display: flex;
+  width: 240px;
+  list-style: none;
+  margin:0 auto;
+  border-bottom: 1px solid #ddd;
+}
+
+.tabs>li{
+  flex: 1;
+  padding: 6px 0;
+  text-align: center;
+}
+
+.tabs>li.on{
+  color: #f90;
+  border-bottom: 2px solid #f90;
+  margin-bottom: -1px;
 }
 </style>

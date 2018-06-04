@@ -14,8 +14,8 @@ var CALL_START_HOUR = 6+24-8; // 开始打卡时间
 var CALL_END_HOUR = 9-8;	 //打卡结束时间
 var CHARGE_DELAY = 20*60*1000; //每天清算时间，相对于打卡结束时间的时延
 
-var DEPOSIT_AMOUNT = 0.05; // 0.05NAS
-var BROKEN_RAGE_AMOUNT = 0.01; //提成0.01NAS
+var DEPOSIT_AMOUNT = 0.02; // 0.02NAS
+var BROKEN_RAGE_AMOUNT = 0.002; //提成0.002NAS
 
 if( !IS_PROD ){
 	DEPOSIT_AMOUNT = 0.0001;
@@ -234,8 +234,10 @@ MorningCall.prototype = {
     /**
      * 打卡
      */
-    doCall: function(address) {
-        var value = Blockchain.transaction.value;
+    doCall: function() {
+		var address = Blockchain.transaction.from;
+		var value = Blockchain.transaction.value;
+
         var user = this.userPool.get(address)
 
         if (value != 0) {

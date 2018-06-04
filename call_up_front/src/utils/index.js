@@ -41,15 +41,48 @@ export const callContract = options=>{
       },
       callback: CALLBACK_URL, 
       listener:(resp)=>{
-        console.log('callContract', resp)
-        if( resp.txhash ){
-          queryTxResult(resp.txhash, options.success, options.error)
-        }else{
-          options.error(resp)
-        }
+        // console.log('callContract', resp)
+        // if( resp.txhash ){
+        //   queryTxResult(resp.txhash, options.success, options.error)
+        // }else{
+        //   options.error(resp)
+        // }
       }
   }
-  nebPay.call(to, value, callFunction, callArgs, config);
+  console.log('contract config', config, NebPay.config.mainnetUrl)
+  let serialNumber= nebPay.call(to, value, callFunction, callArgs, config);
+  setTimeout(()=>queryPayInfo( serialNumber, options.success, options.error ), 2000)
+}
+
+const queryPayInfo = (serialNumber, success, errCB )=>{
+    nebPay.queryPayInfo(serialNumber)   //search transaction result from server (result upload to server by app)
+      .then( resp=>{
+          console.log("tx result: " + resp)   //resp is a JSON string
+          var respObject = JSON.parse(resp)
+          if(respObject.code === 0){
+              //The transaction is successful 
+            let data = respObject.data
+            if( data.from ){
+              Cookies.set('nas_wallet_address', data.from, 365 ) //一年有效的cookie
+            }
+            if( data.status === 1 ){
+              success&&success(data)
+            }else if( data.status === 2){
+              window.setTimeout(()=>queryPayInfo( serialNumber, success, errCB), 6000)
+            }else{
+              errCB&&errCB( data.execute_result )
+            }
+          }else {
+            if( respObject.msg.indexOf('does not exist')>0 ){
+              window.setTimeout(()=>queryPayInfo( serialNumber, success, errCB), 6000)
+            }else{
+              errCB&&errCB( respObject.msg )
+            }
+          }
+      })
+      .catch(err=>{
+          console.log(err)
+      });
 }
 
 const queryTxResult = (hash, success, errCB)=>{

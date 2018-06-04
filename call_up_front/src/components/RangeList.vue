@@ -1,6 +1,7 @@
 <template>
     <div class="range-list">
-        <range-item v-for="(item, index) in list " :key="item.username" :data="item" :index="index"/>
+      <div class="panel" v-show="list.length<1">无数据</div>
+      <range-item v-for="(item, index) in list " :key="item.username" :data="item" :index="index"/>
     </div>
 </template>
 

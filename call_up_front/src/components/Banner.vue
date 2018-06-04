@@ -18,6 +18,6 @@ export default {
 </script>
 <style>
 .top-banner{
-  padding: 20px 0;
+  padding: 20px 0 10px;
 }
 </style>

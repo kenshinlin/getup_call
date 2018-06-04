@@ -65,15 +65,15 @@
 
     methods:{
       ok(){
-        let address = this.address
+        // let address = this.address
 
-        if( !address ){
-          this.modalLoading = false
-          Vue.nextTick().then(()=>this.modalLoading=true)
-          return this.$Message.error('请输入钱包地址')
-        }else{
+        // if( !address ){
+        //   this.modalLoading = false
+        //   Vue.nextTick().then(()=>this.modalLoading=true)
+        //   return this.$Message.error('请输入钱包地址')
+        // }else{
           this.sign()
-        }
+        // }
       },
 
       sign(){
@@ -100,3 +100,7 @@
     }
   }
 </script>
+
+<style>
+.ivu-alert-with-desc{margin-bottom: 0;}
+</style>
