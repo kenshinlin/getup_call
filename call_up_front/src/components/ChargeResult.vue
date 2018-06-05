@@ -14,6 +14,7 @@
 </template>
 <script>
 import {DEPOSIT_AMOUNT, BROKEN_RAGE_AMOUNT, CALL_END_HOUR} from '../constants/'
+import {fixedNumber} from '../utils/'
 
 export default {
   props:['data'],
@@ -37,7 +38,7 @@ export default {
     total(){ 
       if( this.data.challengeFailUserList  ){
         let c = this.data.challengeFailUserList.length
-        return (DEPOSIT_AMOUNT - BROKEN_RAGE_AMOUNT ) * c
+        return fixedNumber((DEPOSIT_AMOUNT - BROKEN_RAGE_AMOUNT ) * c)
       }else{
         return '--'
       }

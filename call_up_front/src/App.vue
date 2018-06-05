@@ -11,6 +11,9 @@ export default {
 </script>
 
 <style>
+body,html,#app{
+  height: 100%;
+}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -18,7 +21,18 @@ export default {
   text-align: center;
   color: #2c3e50;
   font-size:14px;
+  position: relative;
 }
+
+@media screen and (min-width: 580px){
+  #app{
+    width: 360px;
+    height: 640px;
+    margin: 0 auto;
+    border: 1px solid #ddd;
+  }
+}
+
 .word-break{word-break:break-all;}
 .text-link{ color: #175199; outline: none;}
 .text-gray{color: #8590a6;}
@@ -32,6 +46,7 @@ export default {
 
 
 .vertical-center-modal{
+    margin-top: -80px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -59,6 +74,16 @@ div.ivu-modal-footer{
 }
 div.ivu-modal-footer>button{
   flex: 1;
+}
+
+button.ivu-btn-primary,button.ivu-btn-primary:active{
+  background-color: #f90;
+  border-color: #f90;
+}
+
+button.ivu-btn-primary:hover{
+  background-color: #f5bc6a;
+  border-color: #f5bc6a;
 }
 
 div.ivu-modal-footer>button:first-child{

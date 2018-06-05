@@ -66,6 +66,9 @@ export default {
 </script>
 
 <style>
+.user-info{
+  padding: 12px;
+}
 .user-info .tabs{
   font-size: 12px;
   width: 168px;

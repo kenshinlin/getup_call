@@ -7,12 +7,13 @@
 </template>
 <script>
 import {DEPOSIT_AMOUNT, BROKEN_RAGE_AMOUNT} from '../constants/'
+import {fixedNumber} from '../utils/'
 
 export default {
   props:['data'],
   computed:{
     totalPeople(){return this.data.length},
-    totalPrize(){ return this.data.length?(DEPOSIT_AMOUNT - BROKEN_RAGE_AMOUNT ) * this.data.length:'--' }
+    totalPrize(){ return this.data.length?fixedNumber((DEPOSIT_AMOUNT - BROKEN_RAGE_AMOUNT ) * this.data.length):'--' }
   }
 }
 </script>

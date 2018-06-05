@@ -6,8 +6,8 @@
         {{data.username}}
         <span>{{callTimes}}天</span>
       </div>
-      <div class="float-right" style="line-height:38px;">
-        <span v-show="data.callAt">上次打卡 {{data.callAt}}</span>
+      <div class="float-right" style="line-height:30px;">
+        <span v-show="data.callAt">上次打卡 {{callAt}}</span>
         <span v-show="!data.callAt">没打过卡</span>
       </div>
   </div>
@@ -15,6 +15,7 @@
 
 <script>
   import RangeItem from '@/components/RangeItem'
+  import {formatTime} from '../utils/'
 
   export default {
     props:["data", "index"],
@@ -30,6 +31,9 @@
     computed:{
       callTimes(){
         return this.data.callRecords?this.data.callRecords.length:'0'
+      },
+      callAt(){
+        return formatTime(this.data.callAt, true)
       }
     }
   }
@@ -39,5 +43,6 @@
 .range-item{
   text-align:left;
   overflow:auto;
+  padding: 8px 12px;
 }
 </style>

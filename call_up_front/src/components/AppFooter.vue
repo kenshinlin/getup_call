@@ -23,11 +23,12 @@ export default{
 .footer{
   margin-top:14px;
   background:#555;
-  padding:12px;
-  color:#FFF;
+  padding:8px;
+  color:#ccc;
+  font-size: 12px;
 }
 .fix{
-  position: fixed;
+  position: absolute;
   bottom: 0;
   left: 0;
   right: 0;

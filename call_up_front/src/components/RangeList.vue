@@ -18,6 +18,6 @@
 
 <style>
 .range-list{
-  min-height: 170px;
+  /* min-height: 170px; */
 }
 </style>

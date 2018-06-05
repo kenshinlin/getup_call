@@ -10,12 +10,14 @@ ENV = 'prod'
 
 var IS_PROD = ENV==='prod'
 
-var CALL_START_HOUR = 6+24-8; // 开始打卡时间
-var CALL_END_HOUR = 9-8;	 //打卡结束时间
+// 
+var CALL_START_HOUR = fixTimeZoneHour(6)
+var CALL_END_HOUR = fixTimeZoneHour(8)	 //打卡结束时间
+
 var CHARGE_DELAY = 20*60*1000; //每天清算时间，相对于打卡结束时间的时延
 
-var DEPOSIT_AMOUNT = 0.02; // 0.02NAS
-var BROKEN_RAGE_AMOUNT = 0.002; //提成0.002NAS
+var DEPOSIT_AMOUNT = 0.01; // 0.02NAS
+var BROKEN_RAGE_AMOUNT = 0.001; //提成0.002NAS
 
 if( !IS_PROD ){
 	DEPOSIT_AMOUNT = 0.0001;
@@ -27,6 +29,15 @@ var NAS_CELL = 1000000000000000000;
 var DEPOSIT = new BigNumber(DEPOSIT_AMOUNT * NAS_CELL);
 var BROKEN_RAGE = new BigNumber(BROKEN_RAGE_AMOUNT * NAS_CELL);
 
+
+function fixTimeZoneHour(hour){
+	if( hour >= 8 ){
+		hour = hour - 8
+	}else{
+		hour = hour + 24 - 8
+	}
+	return hour
+}
 
 function toDate( dateStr ){
 	return !!dateStr?new Date(dateStr):0
@@ -246,7 +257,7 @@ MorningCall.prototype = {
 
 		// 开发环境不限制打卡时间
         if( IS_PROD && !this._inCallTime() ){
-        	throw new Error("请在北京时间上午6点到9点之间打卡")
+        	throw new Error("请在北京时间上午6点到8点之间打卡")
         }
 
         if ( !this._isUserInChallenge(address) ) {
@@ -472,7 +483,7 @@ MorningCall.prototype = {
     	this.challengeUserPoolArrayMap.set(index, user.address)
     	this.challengeUserPool.put( user.address, user.address ) 
     	this.challengeUserPoolSize++;
-    },
+	},
 
     /**
      * 当前时间是否在打卡时间段内
@@ -483,25 +494,44 @@ MorningCall.prototype = {
 			return false;
 		}
 
-    	t = t||new Date()
-    	t = t.getTime()
+		t = t||new Date()
+		
+		var gap = +new Date - t.getTime()
 
-		var callEndTime = newDate();
-    	callEndTime.setHours(CALL_END_HOUR);
-    	callEndTime.setMinutes(0);
-    	callEndTime.setSeconds(0);
-    	callEndTime.setMilliseconds(0);
+		// 大于18小时不算今天的卡
+		if( gap > 18*60*60*1000 ){
+			return false
+		}
+		
+		var hour = t.getHours()
 
-		var callStartTime = newDate().getTime() - 24*60*60*1000;
-		callStartTime = new Date(callStartTime)
-		callStartTime.setHours(CALL_START_HOUR);
-    	callStartTime.setMinutes(0);
-    	callStartTime.setSeconds(0);
-    	callStartTime.setMilliseconds(0);
+		// 不跨天
+		if( hour>= CALL_START_HOUR && hour < CALL_END_HOUR ){
+			return true
+		}
 
-    	return t>=callStartTime.getTime()&&t<=callEndTime.getTime()
-    },
+		// 跨天
+		if( CALL_START_HOUR > CALL_END_HOUR ){
+			if( hour >= CALL_START_HOUR ){
+				return true
+			}
 
+			if( hour < CALL_END_HOUR ){
+				return true
+			}
+		}
+
+		return false
+	},
+	
+	inCallTime:function(t){
+		if( t ){
+			t = new Date(t)
+		}
+		return [this._inChargeTime(t), this._inCallTime(t)]
+	},
+
+	// 如果结束时间小于8点，那要改这里的逻辑
     _inChargeTime:function( t){
     	t = t||new Date();
     	t = t.getTime();

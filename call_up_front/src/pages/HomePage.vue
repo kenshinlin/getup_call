@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div id="pageContent">
     <div class="page-header">
       <div class="logo">
         <img src="../assets/logo.png"/>
@@ -15,7 +15,7 @@
             shape="circle" 
             @click="selectAddress">打卡</Button>
         </div>
-        <p style="padding-top:8px;" @click="showRule">
+        <p class="rule-tip" @click="showRule">
           <span>游戏规则</span> <Icon type="help-circled"></Icon>
         </p>
         <charge-result :data="chargeResultData||{}"/>
@@ -70,6 +70,7 @@ import {simulateCall, today, isWechat} from '../utils/'
 import Cookies from 'js-cookie'
 import { CALL_END_HOUR } from '../constants/'
 
+
 export default {
   name: 'HomePage',
   data () {
@@ -100,10 +101,16 @@ export default {
   },
   mounted(){
     this.fetchData()
+    this.$Loading.config({
+      color: '#f90',
+      failedColor: '#f90',
+      height: 5
+    })
     this.$Message.config({
       top: 80,
       duration: 5
     })
+    this.$Loading.start()
     this.checkFooterFix()
   },
 
@@ -138,10 +145,12 @@ export default {
     },
 
     fetchData(){
-      this.fetchRange()
-      this.fetchUserInfo()
-      this.fetchPrizePool()
-      this.fetchChargeResult()
+      Promise.all([
+        this.fetchRange(),
+        this.fetchUserInfo(),
+        this.fetchPrizePool(),
+        this.fetchChargeResult()
+      ]).then(()=>this.$Loading.finish())
     },
 
     fetchChargeResult(){
@@ -158,7 +167,7 @@ export default {
         day = today(t)
       }
 
-      simulateCall({function:"dayChargeInfo", args:[day]}).then(result=>{
+      return simulateCall({function:"dayChargeInfo", args:[day]}).then(result=>{
         if( hasCharge ){
           this.todayChargeResult = result
         }else{
@@ -168,28 +177,31 @@ export default {
     },
 
     fetchRange(){
-      simulateCall({function:"range"}).then(range=>this.range=range)
+      return simulateCall({function:"range"}).then(range=>this.range=range)
     },
 
     fetchPrizePool(){
-      simulateCall({function:"prizePool"}).then(prizePool=>this.prizePool=prizePool)
+      return simulateCall({function:"prizePool"}).then(prizePool=>this.prizePool=prizePool)
     },
 
     fetchUserInfo(){
       let address = this.address
       if( address ){
-        simulateCall({function:"userInfo", args:[address]}).then(userInfo=>{
+        return simulateCall({function:"userInfo", args:[address]}).then(userInfo=>{
           this.userInfo=userInfo||{}
           console.log('fetchUserInfo', userInfo)
         })
       }
     },
     checkFooterFix(){
+      let appEl = document.getElementById('app')
+      let pageContent = document.getElementById('pageContent')
+
       // this.fixFooter = false
       this.check = true
       window.setTimeout(()=>{
-        let screenHeight = window.screen.availHeight
-        let bodyHeight = document.body.getBoundingClientRect().height
+        let screenHeight = appEl.getBoundingClientRect().height
+        let bodyHeight = pageContent.getBoundingClientRect().height
         this.fixFooter = screenHeight - bodyHeight > 5 
         this.check = false
       }, 300)
@@ -268,5 +280,10 @@ export default {
   color: #f90;
   border-bottom: 2px solid #f90;
   margin-bottom: -1px;
+}
+.rule-tip{
+  position: absolute;
+  top: 7px;
+  right: 7px;
 }
 </style>

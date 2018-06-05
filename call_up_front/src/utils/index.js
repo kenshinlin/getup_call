@@ -54,35 +54,41 @@ export const callContract = options=>{
   setTimeout(()=>queryPayInfo( serialNumber, options.success, options.error ), 2000)
 }
 
-const queryPayInfo = (serialNumber, success, errCB )=>{
-    nebPay.queryPayInfo(serialNumber)   //search transaction result from server (result upload to server by app)
-      .then( resp=>{
-          console.log("tx result: " + resp)   //resp is a JSON string
-          var respObject = JSON.parse(resp)
-          if(respObject.code === 0){
-              //The transaction is successful 
-            let data = respObject.data
-            if( data.from ){
-              Cookies.set('nas_wallet_address', data.from, 365 ) //一年有效的cookie
-            }
-            if( data.status === 1 ){
-              success&&success(data)
-            }else if( data.status === 2){
-              window.setTimeout(()=>queryPayInfo( serialNumber, success, errCB), 6000)
-            }else{
-              errCB&&errCB( data.execute_result )
-            }
-          }else {
-            if( respObject.msg.indexOf('does not exist')>0 ){
-              window.setTimeout(()=>queryPayInfo( serialNumber, success, errCB), 6000)
-            }else{
-              errCB&&errCB( respObject.msg )
-            }
+const queryPayInfo = (serialNumber, success, errCB, reFetchCount=0 )=>{
+
+  // 重试50次，没有返回认为失败，约5分钟
+  if( reFetchCount++ > 50 ){
+    console.log('reFetchCount', reFetchCount)
+    return errCB('提交区块链失败')
+  }
+  nebPay.queryPayInfo(serialNumber)   //search transaction result from server (result upload to server by app)
+    .then( resp=>{
+        console.log("tx result: " + resp)   //resp is a JSON string
+        var respObject = JSON.parse(resp)
+        if(respObject.code === 0){
+            //The transaction is successful 
+          let data = respObject.data
+          if( data.from ){
+            Cookies.set('nas_wallet_address', data.from, 365 ) //一年有效的cookie
           }
-      })
-      .catch(err=>{
-          console.log(err)
-      });
+          if( data.status === 1 ){
+            success&&success(data)
+          }else if( data.status === 2){
+            window.setTimeout(()=>queryPayInfo( serialNumber, success, errCB, reFetchCount), 6000)
+          }else{
+            errCB&&errCB( data.execute_result )
+          }
+        }else {
+          if( respObject.msg.indexOf('does not exist')>0 ){
+            window.setTimeout(()=>queryPayInfo( serialNumber, success, errCB,reFetchCount), 6000)
+          }else{
+            errCB&&errCB( respObject.msg )
+          }
+        }
+    })
+    .catch(err=>{
+        console.log(err)
+    });
 }
 
 const queryTxResult = (hash, success, errCB)=>{
@@ -132,4 +138,8 @@ export const isWechat = ()=>{
   var ua = window.navigator.userAgent.toLowerCase();
   //通过正则表达式匹配ua中是否含有MicroMessenger字符串
   return ua.match(/MicroMessenger/i) == 'micromessenger'
+}
+
+export function fixedNumber(num){
+  return Math.round( num * 100 )/100
 }
