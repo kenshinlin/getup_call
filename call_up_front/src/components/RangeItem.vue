@@ -3,12 +3,15 @@
       <div class="float-left">
         <span :class="rangeIndexClass">{{index+1}}</span>
         <img class="avatar" :src="data.avatar"/>
-        {{data.username}}
+        <span class="text-link">{{data.username}}</span>
         <span>{{callTimes}}天</span>
       </div>
-      <div class="float-right" style="line-height:30px;">
-        <span v-show="data.callAt">上次打卡 {{callAt}}</span>
+      <div class="float-right" v-if="type!='challenge'" style="line-height:30px;">
+        <span v-show="data.callAt">{{callAt}} 打卡</span>
         <span v-show="!data.callAt">没打过卡</span>
+      </div>
+      <div class="float-right" v-if="type=='challenge'" style="line-height:30px;">
+        <span>{{payDepositAt}}报名</span>
       </div>
   </div>
 </template>
@@ -18,7 +21,7 @@
   import {formatTime} from '../utils/'
 
   export default {
-    props:["data", "index"],
+    props:["data", "index", "type"],
     data(){
       let rangeIndexClass = {
         'text-danger': this.index==0,
@@ -34,6 +37,9 @@
       },
       callAt(){
         return formatTime(this.data.callAt, true, false)
+      },
+      payDepositAt(){
+        return formatTime(this.data.payDepositAt, true, false)
       }
     }
   }

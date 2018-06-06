@@ -1,0 +1,14 @@
+{
+  "name": "morning_call",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "author": "kenshinlin",
+  "license": "ISC",
+  "dependencies": {
+    "call-contract": "^1.0.0"
+  }
+}

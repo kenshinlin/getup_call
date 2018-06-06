@@ -1,6 +1,6 @@
 <template>
   <div class="top-banner">
-    <p>明日资金池</p>
+    <p>明日奖金池</p>
     <p class="text-large">{{totalPrize||'--'}} NAS</p>
     <p>挑战者{{totalPeople}}人</p>
   </div>

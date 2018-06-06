@@ -1,6 +1,6 @@
 <template>
   <div class="charge-result">
-    <p class="text-bold text-middle title">{{dayZh}}日打卡战况</p>
+    <p class="text-bold title">{{dayZh}}日打卡战况</p>
     <p v-show="hasPrize">
       <span class="text-primary text-bold">{{out}}</span>人出局，
       <span class="text-primary text-bold">{{success}}</span>人打卡成功，瓜分

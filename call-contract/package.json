@@ -1,16 +1,16 @@
 {
-  "name": "callup_contab",
+  "name": "call-contract",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "index.js",
   "dependencies": {
     "log4js": "^2.8.0",
     "nebulas": "^0.5.0"
   },
   "devDependencies": {},
   "scripts": {
-    "test": "node main.js"
+    "test": "node index.js"
   },
-  "author": "kenshinlin",
+  "author": "kenshinlin<kenshinlin@foxmail.com>",
   "license": "ISC"
 }

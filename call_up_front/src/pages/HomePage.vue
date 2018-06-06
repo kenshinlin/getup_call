@@ -33,7 +33,7 @@
     </div>
     <div>
       <range-list v-show="selectTab=='rank'" :list="range"/>
-      <range-list v-show="selectTab=='challenge'" :list="prizePool"/>
+      <range-list v-show="selectTab=='challenge'" :list="prizePool" type="challenge"/>
       <user-info v-show="selectTab=='me'" :data="userInfo" @changetab="checkFooterFix"/>
     </div>
     <simple-address-selector v-model="showAddressSelector" @complete="fetchData"/>
@@ -45,7 +45,7 @@
       class-name="vertical-center-modal"
       >
         <ol style="padding:12px;">
-          <li>每天北京时间6点到9点打卡有效</li>
+          <li>每天北京时间6点到8点打卡有效</li>
           <li>报名需支付挑战金，挑战金不退还，报名后第二天开始打卡</li>
           <li>每天打卡一次，打卡可获得奖金</li>
           <li>一旦中断打卡，你的挑战金将被当天打卡的人平分</li>
@@ -100,17 +100,16 @@ export default {
     AppFooter
   },
   mounted(){
-    this.fetchData()
     this.$Loading.config({
       color: '#f90',
       failedColor: '#f90',
       height: 5
     })
+    this.fetchData()
     this.$Message.config({
       top: 80,
       duration: 5
     })
-    this.$Loading.start()
     this.checkFooterFix()
   },
 
@@ -145,12 +144,15 @@ export default {
     },
 
     fetchData(){
+      this.$Loading.start()
+
       Promise.all([
         this.fetchRange(),
         this.fetchUserInfo(),
         this.fetchPrizePool(),
         this.fetchChargeResult()
       ]).then(()=>this.$Loading.finish())
+        .catch(()=>this.$Loading.start())
     },
 
     fetchChargeResult(){
