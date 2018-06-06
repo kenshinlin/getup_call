@@ -45,8 +45,7 @@ export default {
   },
   computed:{
     callRecords(){
-      let list =this.data.callRecords||[]
-      return list.map(n=>formatTime(n, true))
+      return (this.data.callRecords||[]).map(t=>t.t)
     },
     payRecords(){
       let list =this.data.payRecords||[]

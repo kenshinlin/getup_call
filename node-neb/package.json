@@ -1,0 +1,16 @@
+{
+  "name": "callup_contab",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "dependencies": {
+    "log4js": "^2.8.0",
+    "nebulas": "^0.5.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node main.js"
+  },
+  "author": "kenshinlin",
+  "license": "ISC"
+}

@@ -33,7 +33,7 @@
         return this.data.callRecords?this.data.callRecords.length:'0'
       },
       callAt(){
-        return formatTime(this.data.callAt, true)
+        return formatTime(this.data.callAt, true, false)
       }
     }
   }

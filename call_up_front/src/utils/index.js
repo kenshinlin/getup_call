@@ -118,7 +118,7 @@ export const today = ( t )=>{
 
 export const toDateNumString = (num)=>('000'+num).substr(-2)
 
-export const formatTime = (date, needTime=false)=>{
+export const formatTime = (date, needTime=false, needYear=true)=>{
 	date = new Date(date) || new Date
 	var year = date.getFullYear()
 	var month = date.getMonth() + 1
@@ -128,10 +128,13 @@ export const formatTime = (date, needTime=false)=>{
 	var minute = date.getMinutes()
 	var second = date.getSeconds()
 
+  var ret
 	if( needTime === true){
-		return [year, ...[month, day].map(toDateNumString)].join('-') + ' ' + [hour, minute].map(toDateNumString).join(':')		
-	}
-	return [year, ...[month, day].map(toDateNumString)].join('-')
+		ret = [year, ...[month, day].map(toDateNumString)].join('-') + ' ' + [hour, minute].map(toDateNumString).join(':')		
+	}else{
+    ret= [year, ...[month, day].map(toDateNumString)].join('-')
+  }
+  return needYear? ret :ret.replace(year+'-', '')
 }
 
 export const isWechat = ()=>{

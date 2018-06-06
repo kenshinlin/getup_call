@@ -87,10 +87,12 @@ button.ivu-btn-primary:hover{
 }
 
 div.ivu-modal-footer>button:first-child{
-  border-radius: 0 0 0 4px;
+  /* border-radius: 0 0 0 4px; */
+  display: none;
 }
 div.ivu-modal-footer>button:last-child{
-  border-radius: 0 0 4px 0;
+  border-radius: 0 0 4px 4px;
+  margin-left: 0;
 }
 
 div.ivu-modal-body{

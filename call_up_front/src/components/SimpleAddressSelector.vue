@@ -5,6 +5,7 @@
       @input="$emit('input', $event)"
       title="输入钱包地址" 
       @on-ok="ok" 
+      :ok-text="okLabel"
       :mask-closable="false"
       :loading="modalLoading"
       class-name="vertical-center-modal"
@@ -54,12 +55,16 @@
     data(){
       return {
         address: Cookies.get('nas_wallet_address')||'',
-        modalLoading:true
+        modalLoading:true,
+        submitting:false
       }
     },
     computed:{
       visible(){
         return this.value
+      },
+      okLabel(){
+        return this.submitting?'正在查询打卡结果':'打卡'
       }
     },
 
@@ -77,6 +82,7 @@
       },
 
       sign(){
+        this.submitting = true
         let value = "0";
         let callFunction = "doCall" 
         let args =  [ this.address ]
@@ -89,11 +95,13 @@
             this.$Message.info("打卡成功")
             this.$emit('input',false)
             this.$emit('complete')            
+            this.submitting = false
           },
           error: msg=>{
             this.$Message.error('打卡失败，'+msg)
             this.modalLoading = false
             Vue.nextTick().then(()=>this.modalLoading=true)
+            this.submitting = false
           }
         })
       }

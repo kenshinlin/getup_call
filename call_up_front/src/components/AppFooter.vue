@@ -27,6 +27,9 @@ export default{
   color:#ccc;
   font-size: 12px;
 }
+@media screen and (max-width: 580px){
+  div.fix{position: fixed;}
+}
 .fix{
   position: absolute;
   bottom: 0;

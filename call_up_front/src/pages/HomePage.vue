@@ -202,9 +202,9 @@ export default {
       window.setTimeout(()=>{
         let screenHeight = appEl.getBoundingClientRect().height
         let bodyHeight = pageContent.getBoundingClientRect().height
-        this.fixFooter = screenHeight - bodyHeight > 5 
+        this.fixFooter = screenHeight - bodyHeight > ( this.fixFooter ? 82: 4)
         this.check = false
-      }, 300)
+      }, 0)
     }
   }
 }

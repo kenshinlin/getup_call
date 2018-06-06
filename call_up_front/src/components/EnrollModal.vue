@@ -5,7 +5,7 @@
       @input="$emit('input', $event)"
       title="报名确认" 
       @on-ok="ok" 
-      ok-text="支付"
+      :ok-text="okLabel"
       :mask-closable="false"
       :loading="modalLoading"
       class-name="vertical-center-modal"
@@ -53,7 +53,8 @@
         username:"",
         avatar:'',
         modalLoading:true,
-        deposit:DEPOSIT_AMOUNT
+        deposit:DEPOSIT_AMOUNT,
+        submitting: false
       }
     },
 
@@ -61,6 +62,9 @@
     computed:{
       visible(){
         return this.value
+      },
+      okLabel(){
+        return this.submitting?'正在查询报名结果':'报名'
       }
     },
 
@@ -85,6 +89,7 @@
       },
 
       enroll(){
+        this.submitting = true
         let username = this.username
         let avatar = this.avatar
         let value = DEPOSIT_AMOUNT
@@ -99,10 +104,12 @@
             this.$Message.info('支付成功')
             this.$emit('input',false)
             this.$emit('complete')
+            this.submitting = false
           },
           error: msg=>{
             this.$Message.error('支付失败，'+msg)
             this.modalLoading = false
+            this.submitting = false
             Vue.nextTick().then(()=>this.modalLoading=true)
           }
         })
