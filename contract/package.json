@@ -1,0 +1,15 @@
+{
+  "name": "charge-contract",
+  "version": "1.0.0",
+  "description": "",
+  "main": "charge_per_day.js",
+  "dependencies": {
+    "transaction-sender": "^1.0.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "node charge_per_day.js"
+  },
+  "author": "kenshinlin<kenshinlin@foxmail.com>",
+  "license": "ISC"
+}
