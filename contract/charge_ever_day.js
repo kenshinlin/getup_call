@@ -1,4 +1,4 @@
-const TransactionSender = require('transacation-sender')
+const TransactionSender = require('transaction-sender')
 const keystore = require('./keystore')  //replace your keystore file
 const path = require('path')
 
