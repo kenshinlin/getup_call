@@ -56,10 +56,10 @@ export const callContract = options=>{
 
 const queryPayInfo = (serialNumber, success, errCB, onRefetch, fetchCount=0 )=>{
 
-  // 重试50次，没有返回认为失败，约2分钟
-  if( ++fetchCount > 20 ){
+  // 重试50次，没有返回认为失败，约1分钟
+  if( ++fetchCount > 10 ){
     console.log('fetchCount', fetchCount)
-    return errCB('提交区块链失败')
+    return errCB('重发10次未查到交易结果，交易可能未发起，请自行检查')
   }
   onRefetch( fetchCount )
   nebPay.queryPayInfo(serialNumber)   //search transaction result from server (result upload to server by app)
