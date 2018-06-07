@@ -54,7 +54,8 @@
         avatar:'',
         modalLoading:true,
         deposit:DEPOSIT_AMOUNT,
-        submitting: false
+        submitting: false,
+        fetchCount:0
       }
     },
 
@@ -64,7 +65,7 @@
         return this.value
       },
       okLabel(){
-        return this.submitting?'正在查询报名结果':'报名'
+        return this.submitting?`正在查询报名结果（${this.fetchCount}）`:'报名'
       }
     },
 
@@ -100,6 +101,9 @@
           value,
           function: callFunction,
           args,
+          onRefetch: fetchCount=>{
+            this.fetchCount = fetchCount
+          },
           success: txInfo=>{
             this.$Message.info('支付成功')
             this.$emit('input',false)

@@ -56,7 +56,8 @@
       return {
         address: Cookies.get('nas_wallet_address')||'',
         modalLoading:true,
-        submitting:false
+        submitting:false,
+        fetchCount:0
       }
     },
     computed:{
@@ -64,7 +65,7 @@
         return this.value
       },
       okLabel(){
-        return this.submitting?'正在查询打卡结果':'打卡'
+        return this.submitting?`正在查询打卡结果（${this.fetchCount}）`:'打卡'
       }
     },
 
@@ -91,6 +92,9 @@
           value,
           function: callFunction,
           args,
+          onRefetch: fetchCount=>{
+            this.fetchCount = fetchCount
+          },
           success: txInfo=>{
             this.$Message.info("打卡成功")
             this.$emit('input',false)

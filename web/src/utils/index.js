@@ -51,16 +51,17 @@ export const callContract = options=>{
   }
   console.log('contract config', config, NebPay.config.mainnetUrl)
   let serialNumber= nebPay.call(to, value, callFunction, callArgs, config);
-  setTimeout(()=>queryPayInfo( serialNumber, options.success, options.error ), 2000)
+  setTimeout(()=>queryPayInfo( serialNumber, options.success, options.error, options.onRefetch ), 6000)
 }
 
-const queryPayInfo = (serialNumber, success, errCB, reFetchCount=0 )=>{
+const queryPayInfo = (serialNumber, success, errCB, onRefetch, fetchCount=0 )=>{
 
-  // 重试50次，没有返回认为失败，约5分钟
-  if( reFetchCount++ > 50 ){
-    console.log('reFetchCount', reFetchCount)
+  // 重试50次，没有返回认为失败，约2分钟
+  if( ++fetchCount > 20 ){
+    console.log('fetchCount', fetchCount)
     return errCB('提交区块链失败')
   }
+  onRefetch( fetchCount )
   nebPay.queryPayInfo(serialNumber)   //search transaction result from server (result upload to server by app)
     .then( resp=>{
         console.log("tx result: " + resp)   //resp is a JSON string
@@ -74,13 +75,13 @@ const queryPayInfo = (serialNumber, success, errCB, reFetchCount=0 )=>{
           if( data.status === 1 ){
             success&&success(data)
           }else if( data.status === 2){
-            window.setTimeout(()=>queryPayInfo( serialNumber, success, errCB, reFetchCount), 6000)
+            window.setTimeout(()=>queryPayInfo( serialNumber, success, errCB, refreshCB, fetchCount), 6000)
           }else{
             errCB&&errCB( data.execute_result )
           }
         }else {
           if( respObject.msg.indexOf('does not exist')>0 ){
-            window.setTimeout(()=>queryPayInfo( serialNumber, success, errCB,reFetchCount), 6000)
+            window.setTimeout(()=>queryPayInfo( serialNumber, success, errCB,refreshCB,fetchCount), 6000)
           }else{
             errCB&&errCB( respObject.msg )
           }

@@ -11,7 +11,7 @@ let callbackUrl = NebPay.config.testnetUrl
 let callEndHour = 8
 let callStartHour = 6
 
-if( true||process.env.NODE_ENV === 'production' ){
+if( process.env.NODE_ENV === 'production' ){
   netHost = "https://mainnet.nebulas.io"
   callbackUrl = NebPay.config.mainnetUrl
   depositAmount = 0.01
