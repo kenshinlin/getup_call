@@ -81,7 +81,7 @@ export default {
       range:[], //排行榜
       userInfo:{},
       prizePool: [],
-      todayhargeResult:{},
+      todayChargeResult:{},
       yesterdayChargeResult:{},
       selectTab: 'rank',
       ruleVisible:false,
