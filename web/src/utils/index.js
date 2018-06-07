@@ -75,13 +75,13 @@ const queryPayInfo = (serialNumber, success, errCB, onRefetch, fetchCount=0 )=>{
           if( data.status === 1 ){
             success&&success(data)
           }else if( data.status === 2){
-            window.setTimeout(()=>queryPayInfo( serialNumber, success, errCB, refreshCB, fetchCount), 6000)
+            window.setTimeout(()=>queryPayInfo( serialNumber, success, errCB, onRefetch, fetchCount), 6000)
           }else{
             errCB&&errCB( data.execute_result )
           }
         }else {
           if( respObject.msg.indexOf('does not exist')>0 ){
-            window.setTimeout(()=>queryPayInfo( serialNumber, success, errCB,refreshCB,fetchCount), 6000)
+            window.setTimeout(()=>queryPayInfo( serialNumber, success, errCB,onRefetch,fetchCount), 6000)
           }else{
             errCB&&errCB( respObject.msg )
           }
