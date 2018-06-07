@@ -14,7 +14,7 @@ const path = require('path')
 */
 let sender = new TransactionSender({
 	keystore,
-	logPath: path.join(__dirname, 'contract.log')
+	logPath: path.join(__dirname, 'transaction-sender.log')
 })
 
 sender.call({
