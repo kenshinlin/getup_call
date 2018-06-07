@@ -83,7 +83,7 @@ function signTransaction({contract, to, value, nonce}) {
 		try{
 			options.contract = {
 				function: contract.function,
-				args: JSON.stringify(args)
+				args: JSON.stringify(contract.args||[])
 			}
 		}catch(e){
 			throw 'JSON.stringify contract.args error， plear make sure it is JSON object'
@@ -157,6 +157,7 @@ function queryTX(txHashString) {
 
 
 function setupLog(options){
+	let logger
 	if( options.logger ==='console' ){
 		logger = console
 	}else{
@@ -166,13 +167,14 @@ function setupLog(options){
 		})
 		logger = log4js.getLogger('cheese')
 	}
+	return logger
 }
 
 function checkParmas(options){
 	let keyConf = options.keystore
 	let {keystore, password} = keyConf
 
-	if( keyConf ){
+	if( !keyConf ){
 		throw 'keystore is required'
 	}
 
