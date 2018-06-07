@@ -1,5 +1,5 @@
 const TransactionSender = require('./index')
-const keystore = require('/Users/kenshinlin/Documents/individual/keystore/keystore')
+const keystore = require('../keystore')  //replace your keystore file
 const path = require('path')
 
 /**
@@ -38,8 +38,8 @@ sender.call({
 	.catch(e=>console.log('外层业务捕获调用失败信息',e))
 
 
-sender.transfer({
-	to: 'n1curAvehzbp9y2Lskts158u8aZdRSWycVV',
-	value: 0.0001
-}).then( result=>console.log('交易成功',result))
-.catch(e=>console.log('外层业务捕获交易失败信息',e))
+// sender.transfer({
+// 	to: 'n1curAvehzbp9y2Lskts158u8aZdRSWycVV',
+// 	value: 0.0001
+// }).then( result=>console.log('交易成功',result))
+// .catch(e=>console.log('外层业务捕获交易失败信息',e))
