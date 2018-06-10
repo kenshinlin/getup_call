@@ -4,6 +4,7 @@
 			<p slot="title" class="card-title">
         {{data.homeTeam.nameZh}}-{{data.guestTeam.nameZh}}
         {{startAt}}
+        <Button type="primary" size="small" @click="charge">清算</Button>
       </p>
 			<div class="select-panel flex">
 				<div class="text-center select-team" @click="selectTeam(data.homeTeamID)">
@@ -56,12 +57,14 @@
 				<Button type="primary" shape="circle" @click="vote" :disabled="!hasSelectTeamAndGap">竞 猜</Button>
 			</div>
 			<vote-list :voteList="data.voteList" v-show="showVoteList"/>
+			<charge-modal v-model="showChargeModal" :game="data" @complete="chargeComplete"/>
 		</Card>
 	</div>
 </template>
 <script>
 import VoteList from './VoteList'
-import {formatTime, simulateCall, fixedNumber} from '../utils/'
+import ChargeModal from './ChargeModal'
+import {formatTime, simulateCall, fixedNumber, callContract} from '../utils/'
 
 export default {
 	name: 'GameItem',
@@ -70,11 +73,13 @@ export default {
 		return {
 			selectGap: null,
 			selectTeamID: null,
-			showVoteList:false
+			showVoteList:false,
+			showChargeModal:false
 		}
 	},
 	components:{
-		VoteList
+		VoteList,
+		ChargeModal
 	},
 	mounted(){
 		// this.fetchGameVoteList()
@@ -117,10 +122,11 @@ export default {
 			return {
 				h: hList.length,
 				g: gList.length,
-				hp: fixedNumber(hList.length/voteList.length, 2),
-				gp: fixedNumber(gList.length/voteList.length, 2)
+				hp: fixedNumber(hList.length/voteList.length, 2)*100,
+				gp: fixedNumber(gList.length/voteList.length, 2)*100
 			}
 		},
+		
 		teamSupportMoney(){
 			let voteList = this.data.voteList
 
@@ -142,7 +148,7 @@ export default {
 			g = fixedNumber(g)
 			h = fixedNumber(h)
 
-			return {h, g, hp: fixedNumber(h/(h+g), 2), gp:fixedNumber(g/(h+g), 2)}
+			return {h, g, hp: fixedNumber(h/(h+g), 2)*100, gp:fixedNumber(g/(h+g), 2)*100}
 		}
 
 	},
@@ -170,6 +176,14 @@ export default {
 
 		toggleVoteList(){
 			this.showVoteList = !this.showVoteList
+		},
+
+		charge(){
+			this.showChargeModal = true
+		},
+
+		chargeComplete(){
+			this.$emit('onCharge')
 		}
 	}
 }

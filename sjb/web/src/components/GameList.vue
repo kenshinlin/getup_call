@@ -1,7 +1,7 @@
 <template>
   <div class="game-list">
     <Timeline pending>
-      <TimelineItem v-for="dayInfo in dayList" :key="dayInfo.day">
+      <TimelineItem v-for="dayInfo in dayList" :key="dayInfo.day" color="red">
         <p class="time">{{dayInfo.day}}</p>
         <game-item @vote="vote" v-for="game in dayInfo.list" :key="game.id" :data="game"/>
       </TimelineItem>

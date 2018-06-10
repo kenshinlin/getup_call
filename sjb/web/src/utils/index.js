@@ -31,7 +31,7 @@ export const simulateCall = options=>
       try{
         return JSON.parse(res.result)
       }catch(e){
-        throw e        
+        throw res.result        
       }
     })
 

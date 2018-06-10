@@ -1,6 +1,6 @@
 import NebPay from 'nebpay.js'
 
-export const CONTRACT_ADDR = "n1f4SQMK6mWMQkAseVgPXUmMiEBQGkGzvid" //合约地址
+export const CONTRACT_ADDR = "n1xhprRdsm3xj6pHzt9G5WqD5eHEhAjPMCV" //合约地址
 
 export const BROKEN_RAGE = 5
 

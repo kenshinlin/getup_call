@@ -39,11 +39,13 @@ var Game = function(jsonStr){
 		this.guestTeamID = obj.guestTeamID
 		this.createAt = toDate(obj.createAt)
 		this.over = obj.over
+		this.winner = obj.winner
 		this.startAt = toDate(obj.startAt) //格林治时间 0
 	}else{
 		this.homeTeamID = ''
 		this.guestTeamID = ''
 		this.over = false
+		this.winner = -1
 		this.createAt = new Date()
 		this.startAt = 0
 	}
@@ -169,6 +171,7 @@ VoteGame.prototype = {
 	charge:function( gameID, winTeamID, gap ){
 		var voteList = this.gameVotePool.get(gameID)
 		var game = this.gamePool.get(gameID)
+		gap = gap*1
 
 		if( game.over ){
 			throw new Error('已经结算过, the game has charge')
@@ -184,7 +187,10 @@ VoteGame.prototype = {
 		for( var i=0; i<voteList.length; i++){
 			var vote = voteList[i]
 			vote.jetton = new BigNumber( vote.jetton )
-			if( vote.voteTo === winTeamID && vote.gap === gap ){
+			// 平局的情况
+			if( gap === 0 && vote.gap*1 === gap ){
+				winVotes.push(vote)
+			}else if( vote.voteTo*1 === winTeamID*1 && vote.gap*1 === gap ){
 				winVotes.push(vote)
 			}else{
 				loseVotes.push(vote)
@@ -196,10 +202,10 @@ VoteGame.prototype = {
 
 		// 有胜有负，负的筹码按比例分给胜利者
 		if( loseVotes.length>0 && winVotes.length>0 ){
-			winVotes.forEach( v=> winTotal.plus(v.jetton) )
-			loseVotes.forEach( v=> loseTotal.plus(v.jetton) )
-			var perGet = loseTotal.dividedBy(winTotal)
+			winVotes.forEach( v=> winTotal = winTotal.plus(v.jetton) )
+			loseVotes.forEach( v=> loseTotal = loseTotal.plus(v.jetton) )
 
+			var perGet = loseTotal.dividedBy(winTotal)
 
 			winVotes.forEach(v=>{
 				var w = v.jetton.times(perGet)
@@ -228,6 +234,7 @@ VoteGame.prototype = {
 
 		this.gameVotePool.set(gameID, winVotes.concat(loseVotes))
 		game.over = true
+		game.winner = winTeamID
 		this.gamePool.set(gameID, game)
 	},
 
@@ -239,10 +246,17 @@ VoteGame.prototype = {
 	userVoteList: function(address){
 		var gamePoolSize = this.gamePoolSize
 		var result = []
+		var user = this.userPool.get(address)
+
+		if( !user ){
+			throw new Error('no user')
+		}
 
 		for( var i=0; i<gamePoolSize; i++){
-			var gameVoteList = this.gameVotePool.get(i)
-			var game = this.gamePool.get(i)
+			var gameVoteList = this.gameVotePool.get(i)||[]
+			var game = this.gamePool.get(i)||{}
+			game.homeTeam = teams[game.homeTeamID]
+			game.guestTeam = teams[game.guestTeamID]
 
 			gameVoteList.forEach(v=>{
 				if( v.address === address ){
@@ -255,7 +269,7 @@ VoteGame.prototype = {
 			})
 		}
 
-		return result
+		return {list:result, info: user}
 	},
 
 	userList:function(){
@@ -275,6 +289,8 @@ VoteGame.prototype = {
 			var voteToTeam = teams[v.voteTo]
 			v.user = this.userPool.get(v.address)
 			v.voteToTeam = voteToTeam
+			v.homeTeam = teams[v.homeTeamID]
+			v.guestTeam = teams[v.guestTeamID]
 			v.jetton = new BigNumber( v.jetton ).dividedBy(NAS_CELL)
 		})
 
@@ -286,6 +302,7 @@ VoteGame.prototype = {
 		
 		for(var i=0; i<this.gamePoolSize; i++){
 			var game = this.gamePool.get(i)
+			game.id = i
 			game.homeTeam = teams[game.homeTeamID]
 			game.guestTeam = teams[game.guestTeamID]
 

@@ -46,7 +46,6 @@ export default {
 
 			return simulateCall({function:"gameList"})
 				.then(gameList=>this.gameList=gameList)
-				.then(console.log.bind('gameList'))
 				.then(()=>this.$Loading.finish())
 		},
 

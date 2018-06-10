@@ -1,6 +1,13 @@
 <template>
   <div id="app">
+    <div class="page-header"></div>
     <router-view/>  
+    <div class="footer">
+      <ul>
+        <li><a href="#/home">首页</a></li>
+        <li><a href="#/me">我的</a></li>
+      </ul>
+    </div>
   </div>
 </template>
 
@@ -14,8 +21,8 @@ export default {
   },
   created(){
     this.$Loading.config({
-      color: '#f90',
-      failedColor: '#f90',
+      color: '#19be6b',
+      failedColor: '#19be6b',
       height: 5
     })
     this.$Message.config({
@@ -27,12 +34,56 @@ export default {
 </script>
 
 <style>
+html, body, #app{min-height: 100%;}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+  padding-bottom: 20px;
+  background-color: #ece0e0;
 }
+
+.page-header{
+  background-image: url('./assets/bg.jpeg'); 
+  height: 300px;
+  background-size: cover;
+  /*background-attachment: fixed;*/
+  background-position: 0% 34%;
+}
+
+.footer{
+  position: fixed;
+  bottom: 5px;
+  left: 0;
+  width: 100%;
+}
+
+.footer ul{
+  display: flex;
+  list-style: none;
+  justify-content: center;
+}
+.footer ul li{
+  list-style: none;
+  padding: 4px 12px;
+  background: #ea3f33;
+  color: #FFF;
+  font-weight: bold;
+}
+
+.footer ul li:first-child{
+  border-radius: 4px 0 0 0;
+}
+
+.footer ul li:last-child{
+  border-radius: 0 4px 0 0 ;
+}
+
+.footer a{
+  color: #FFF;
+}
+
 
 .flex{
   display: flex;
@@ -45,6 +96,7 @@ export default {
 .flex.space-center{ justify-content: center; }
 .text-center{text-align: center;}
 .text-left{text-align: left;}
+.text-small{font-size: 10px;}
 div.ivu-card-head{padding: 6px 12px 4px;}
 div.ivu-card-body{padding: 6px;}
 div.ivu-timeline-item-content{padding-left: 19px;}
@@ -103,4 +155,8 @@ div .ivu-modal-close{top:3px;}
 div.ivu-modal-header{padding: 10px 12px;}
 div.ivu-form-item{margin-bottom: 12px;}
 div.ivu-card:hover{box-shadow: 0 1px 1px rgba(0,0,0,.2);}
+
+.ivu-timeline.ivu-timeline-pending .ivu-timeline-item:nth-last-of-type(2) .ivu-timeline-item-tail{
+  border-left: 1px dotted #ea3f33;
+}
 </style>

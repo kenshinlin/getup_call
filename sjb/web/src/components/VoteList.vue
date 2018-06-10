@@ -2,19 +2,27 @@
 	<div class="vote-list">
 		<table>
 			<thead>
-				<th>用户</th>
+				<th>
+					{{page==='me'?"球赛":"用户"}}
+				</th>
 				<th>筹码</th>
 				<th>胜负</th>
 				<th>竞猜时间</th>
 			</thead>
 			<tbody>
 				<tr v-for="vote in fVoteList" :key="vote.createAt+vote.address">
-					<td class="text-left">
+					<td class="text-left" v-if="page!=='me'">
 						<img :src="vote.user.avatar" class="avatar" />
 						<span>{{vote.user.username}}</span>
 					</td>
-					<td>
-						<span>{{vote.jetton}}</span>
+					<td class="text-small" v-if="page==='me'">
+						<span>{{vote.game.homeTeam.nameZh}}</span> - 
+						<span>{{vote.game.guestTeam.nameZh}}</span>
+						<p>{{vote.startAtDate}}</p>
+					</td>
+					<td class="text-small">
+						<p>{{vote.jetton}}</p>
+						<p>{{vote.voteToTeam.nameZh}}(胜{{vote.gap}})</p>
 					</td>
 					<td>
 						<span :class="{
@@ -35,12 +43,15 @@
 import {formatTime} from '../utils/'
 
 export default {
-	props:['voteList'],
+	props:['voteList', 'page'],
 	computed:{
 		fVoteList(){
 			this.voteList = this.voteList||[]
 			return this.voteList.map(v=>{
-				v.createAt = formatTime(v.createAt, true,false)
+				v.createAt = formatTime(v.createAt, true, false)
+				if( v.game && v.game.startAt ){
+					v.startAtDate = formatTime(v.game.startAt, false, false)
+				}
 				return v
 			})
 		}
