@@ -152,7 +152,7 @@ export default {
         this.fetchPrizePool(),
         this.fetchChargeResult()
       ]).then(()=>this.$Loading.finish())
-        .catch(()=>this.$Loading.start())
+        .catch(()=>this.$Loading.finish())
     },
 
     fetchChargeResult(){

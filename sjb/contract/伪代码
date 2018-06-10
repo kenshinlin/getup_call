@@ -1,0 +1,14 @@
+1. 存储赛程，结算状态
+2. 用户对象（基本信息）
+3. 投。GameVotePool：赛程id-->[{用户地址, jetton「最少0.01」, voteTo, gap，winAmount}]
+		winAmount有胜有负
+4. 查看单场赛有多少人参与、及金额，直接取
+5. 查看某用户的投注。用户ID，遍历各场比赛的GameVotePool，该用户有投则加入数组
+6. 清算。从GameVotePool取出单场比赛的所有投注
+	a. 有胜有负，将负筹码求和 bigNumber(cell* fix(loseTotal))，将胜筹码求和 winTotal, 
+			perGet = loseTotal.dividedBy(winTotal)
+			转账：Blockchain.transfer( address, voteAmount.times(cell).times(perGet) )
+		按比例发给胜的，胜的筹码一并转出给胜出者
+	b. 只有胜者，全部退回
+	c. 全败，钱进入合约，转给Dapp管理员
+	以上变化，都要写回GameVotePool
