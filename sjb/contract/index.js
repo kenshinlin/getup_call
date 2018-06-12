@@ -377,17 +377,10 @@ VoteGame.prototype = {
 
 module.exports = VoteGame
 
+var teamsZh = [
+		'俄罗斯', '沙特', '埃及', '乌拉圭', '摩洛哥', '伊朗', '葡萄牙', '西班牙', '法国', '澳大利亚', '秘鲁', 
+		'丹麦', '阿根延', '冰岛', '克罗地亚', '尼日利亚', '哥斯达黎加', '塞尔维亚', '巴西', '瑞士', '德国', '墨西哥',
+		'瑞典', '韩国', '比利时', '巴拿马', '突尼斯', '英格兰', '哥伦比亚', '日本', '波兰', '塞内加尔'
+ ]
 
-var teams = [{
-	name: 'Russia',
-	nameZh: '俄罗斯'
-},{
-	name: 'Saudi Arabia',
-	nameZh:'沙特'
-},{
-	name: 'Egypt',
-	nameZh: '埃及'
-},{
-	name: 'Morocco',
-	nameZh: '摩洛哥'
-}]
+var teams = teamsZh.map(g=>{return {nameZh:g} })

@@ -95,7 +95,7 @@ export default {
 .me-page{
 	padding: 8px;
 	background-color: #fff;
-	height: 70%;
+	height: 50%;
 }
 .basic{
 	text-align: center;

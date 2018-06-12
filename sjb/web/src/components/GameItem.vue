@@ -8,7 +8,7 @@
       </p>
 			<div class="select-panel flex">
 				<div class="text-center select-team" @click="selectTeam(data.homeTeamID)">
-					<Avatar class="beat-btn" :src="'../assets/'+(data.homeTeamID+1)+'.png'" />
+					<img class="beat-btn avatar" :src="'static/gq/'+(data.homeTeamID+1)+'.png'" />
 					<p><Icon type="checkmark" v-show="selectHomeTeam" color="#ed3f14"></Icon></p>
 					<!-- <Button type="primary" size="small" shape="circle">胜</Button> -->
 				</div>
@@ -27,10 +27,15 @@
 					</div>
 				</div>
 				<div class="text-center select-team" @click="selectTeam(data.guestTeamID)">
-					<Avatar class="beat-btn" src="http://kk.kenniu.top/uimg/2018-06-07/mmexport1515053601248_93d543a6.png" />
+					<img class="beat-btn avatar" :src="'static/gq/'+(data.guestTeamID+1)+'.png'" />
 					<p><Icon type="checkmark" v-show="selectGuestTeam" color="#ed3f14"></Icon></p>
 					<!-- <Button type="primary" size="small" shape="circle">胜</Button> -->
 				</div>
+			</div>
+
+			<div class="text-center" style="margin-bottom:14px;">
+				<!-- <Button type="ghost" shape="circle">猜</Button> -->
+				<Button type="primary" shape="circle" @click="vote" :disabled="!hasSelectTeamAndGap">竞 猜</Button>
 			</div>
 			<div class="progress text-center" @click="toggleVoteList">
 				<div>
@@ -51,10 +56,6 @@
 				<div class="grow">
 					<Progress :percent="teamSupportMoney.hp" status="wrong" hide-info/>
 				</div>
-			</div>
-			<div class="text-center">
-				<!-- <Button type="ghost" shape="circle">猜</Button> -->
-				<Button type="primary" shape="circle" @click="vote" :disabled="!hasSelectTeamAndGap">竞 猜</Button>
 			</div>
 			<vote-list :voteList="data.voteList" v-show="showVoteList"/>
 			<charge-modal v-model="showChargeModal" :game="data" @complete="chargeComplete"/>

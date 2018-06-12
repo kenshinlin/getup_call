@@ -26,10 +26,12 @@ body,html,#app{
 
 @media screen and (min-width: 580px){
   #app{
-    width: 360px;
-    height: 640px;
+    width: 450px;
+    height: 650px;
     margin: 0 auto;
-    border: 1px solid #ddd;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 0.8571rem 1.0714rem 0 rgba(0, 0, 0, 0.24), 0 1.2143rem 3.5714rem 0 rgba(0, 0, 0, 0.19);
   }
 }
 

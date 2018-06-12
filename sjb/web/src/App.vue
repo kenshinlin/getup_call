@@ -1,10 +1,14 @@
 <template>
   <div id="app">
-    <div class="page-header"></div>
-    <router-view/>  
+    <div class="app-inner">
+      <div class="page-header" :style="{height:bannerHeight+'px'}"></div>
+      <router-view/>  
+    </div>
     <div class="footer">
       <ul>
         <li><a href="#/home">首页</a></li>
+        <li><a href="#/allgames">赛程</a></li>
+        <li><a href="#/rules">规则</a></li>
         <li v-if="isAdmin"><a href="#/addgame">录入游戏</a></li>
         <li><a href="#/me">我的</a></li>
       </ul>
@@ -13,7 +17,6 @@
 </template>
 
 <script>
-import HomePage from './pages/HomePage'
 import {ADMIN_ADDR} from './constants/'
 import Cookies from 'js-cookie'
 
@@ -23,11 +26,9 @@ export default {
     let isAdmin = Cookies.get('nas_wallet_address') == ADMIN_ADDR
 
     return {
-      isAdmin
+      isAdmin,
+      bannerHeight: 300
     }
-  },
-  components: {
-    HomePage
   },
   created(){
     this.$Loading.config({
@@ -39,32 +40,49 @@ export default {
       top: 80,
       duration: 5
     })
+
+    // setTimeout(()=>this.bannerHeight=30, 5000)
   }
 }
 </script>
 
 <style>
-html, body, #app{min-height: 100%;}
+html, body, #app, .app-inner{height: 100%;}
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  padding-bottom: 20px;
   background-color: #ece0e0;
+  position: relative;
+}
+
+.app-inner{
+  overflow: auto;
+}
+
+
+@media screen and (min-width: 580px){
+  #app{
+    width: 450px;
+    height: 650px;
+    margin: 0 auto;
+    border: 2px solid #ddd;
+    border-radius: 4px;
+    box-shadow: 0 0.8571rem 1.0714rem 0 rgba(0, 0, 0, 0.24), 0 1.2143rem 3.5714rem 0 rgba(0, 0, 0, 0.19);
+  }
 }
 
 .page-header{
   background-image: url('./assets/bg.jpeg'); 
-  height: 300px;
   background-size: cover;
   /*background-attachment: fixed;*/
   background-position: 0% 34%;
 }
 
 .footer{
-  position: fixed;
-  bottom: 5px;
+  position: absolute;
+  bottom: 0;
   left: 0;
   width: 100%;
 }
@@ -168,5 +186,9 @@ div.ivu-card:hover{box-shadow: 0 1px 1px rgba(0,0,0,.2);}
 
 .ivu-timeline.ivu-timeline-pending .ivu-timeline-item:nth-last-of-type(2) .ivu-timeline-item-tail{
   border-left: 1px dotted #ea3f33;
+}
+
+.shouqi{
+  transition: height .5s linear 5s;
 }
 </style>
