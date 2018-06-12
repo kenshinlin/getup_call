@@ -2,6 +2,10 @@
 	<div>
 		<game-list :list="gameList" @vote="vote"/>
 		<enroll-modal v-model="showEnrollModal" :voteInfo="voteInfo" @complete="fetchData"/>
+		<div class="contract">
+			<p>商务合作：kenniu.top@gmail.com</p>
+			<p>@深圳市</p>
+		</div>
 	</div>
 </template>
 <script>
@@ -58,3 +62,9 @@ export default {
 }
 
 </script>
+<style>
+.contract{
+	margin: 20px 0 20px;
+	text-align: center;
+}
+</style>
