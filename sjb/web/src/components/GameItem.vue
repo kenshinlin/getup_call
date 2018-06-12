@@ -4,18 +4,18 @@
 			<p slot="title" class="card-title">
         {{data.homeTeam.nameZh}}-{{data.guestTeam.nameZh}}
         {{startAt}}
-        <Button type="primary" size="small" @click="charge">清算</Button>
+        <Button v-if="canCharge" type="primary" size="small" @click="charge">清算</Button>
       </p>
 			<div class="select-panel flex">
 				<div class="text-center select-team" @click="selectTeam(data.homeTeamID)">
-					<Avatar src="http://kk.kenniu.top/uimg/2018-06-07/hdImg_98b045d21993158aeb91b4d94d40e2431484901504090_1b8af908.jpg" />
+					<Avatar class="beat-btn" :src="'../assets/'+(data.homeTeamID+1)+'.png'" />
 					<p><Icon type="checkmark" v-show="selectHomeTeam" color="#ed3f14"></Icon></p>
 					<!-- <Button type="primary" size="small" shape="circle">胜</Button> -->
 				</div>
 				<div class="grow">
 					<div class="text-center" v-show="!hasSelectTeamAndGap">选择球队和胜球数</div>
 					<div class="text-center" v-show="hasSelectTeamAndGap">
-						选择
+						已选择
 						<span class="text-danger text-bold">{{selectTeamNameZh}}</span> 胜
 						<span class="text-danger text-bold">{{selectGapTxt}}</span>球
 					</div>
@@ -27,7 +27,7 @@
 					</div>
 				</div>
 				<div class="text-center select-team" @click="selectTeam(data.guestTeamID)">
-					<Avatar src="http://kk.kenniu.top/uimg/2018-06-07/mmexport1515053601248_93d543a6.png" />
+					<Avatar class="beat-btn" src="http://kk.kenniu.top/uimg/2018-06-07/mmexport1515053601248_93d543a6.png" />
 					<p><Icon type="checkmark" v-show="selectGuestTeam" color="#ed3f14"></Icon></p>
 					<!-- <Button type="primary" size="small" shape="circle">胜</Button> -->
 				</div>
@@ -64,17 +64,24 @@
 <script>
 import VoteList from './VoteList'
 import ChargeModal from './ChargeModal'
+import {ADMIN_ADDR} from '../constants/'
 import {formatTime, simulateCall, fixedNumber, callContract} from '../utils/'
+import Cookies from 'js-cookie'
+
+
 
 export default {
 	name: 'GameItem',
 	props:['data'],
 	data(){
+		let canCharge = Cookies.get('nas_wallet_address') == ADMIN_ADDR
+
 		return {
 			selectGap: null,
 			selectTeamID: null,
 			showVoteList:false,
-			showChargeModal:false
+			showChargeModal:false,
+			canCharge
 		}
 	},
 	components:{
@@ -221,6 +228,20 @@ export default {
   padding-top: 4px;
   border-radius: 4px;
   margin-bottom: 8px;
+}
+
+
+.beat-btn{
+    animation: beat 1s infinite;
+}
+
+@keyframes beat{
+    from {
+        transform: scale(0.9,0.9);
+    }
+    to {
+        transform: scale(1.1, 1.1);
+    }
 }
 
 </style>

@@ -5,6 +5,7 @@
     <div class="footer">
       <ul>
         <li><a href="#/home">首页</a></li>
+        <li v-if="isAdmin"><a href="#/addgame">录入游戏</a></li>
         <li><a href="#/me">我的</a></li>
       </ul>
     </div>
@@ -13,9 +14,18 @@
 
 <script>
 import HomePage from './pages/HomePage'
+import {ADMIN_ADDR} from './constants/'
+import Cookies from 'js-cookie'
 
 export default {
   name: 'App',
+  data(){
+    let isAdmin = Cookies.get('nas_wallet_address') == ADMIN_ADDR
+
+    return {
+      isAdmin
+    }
+  },
   components: {
     HomePage
   },
