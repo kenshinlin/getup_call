@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "iview": "^2.14.2",
+    "js-cookie": "^2.2.0",
+    "nebpay.js": "^0.2.0",
+    "nebulas": "^0.5.0",
     "vue": "^2.5.16",
     "vue-router": "^3.0.1"
   },
