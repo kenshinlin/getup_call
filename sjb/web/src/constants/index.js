@@ -11,7 +11,7 @@ export const BROKEN_RAGE = 5
 let netHost = "https://testnet.nebulas.io"
 let callbackUrl = NebPay.config.testnetUrl
 
-if( true||process.env.NODE_ENV === 'production' ){
+if( process.env.NODE_ENV === 'production' ){
   netHost = "https://mainnet.nebulas.io"
   callbackUrl = NebPay.config.mainnetUrl
 }
