@@ -27,5 +27,7 @@
 .contract{
 	margin: 20px 0 20px;
 	text-align: center;
+	padding: 8px 0;
+	background-color: #efecb5;
 }
 </style>
