@@ -66,7 +66,7 @@
 import VoteList from './VoteList'
 import ChargeModal from './ChargeModal'
 import {ADMIN_ADDR} from '../constants/'
-import {formatTime, simulateCall, fixedNumber, callContract} from '../utils/'
+import {formatTime, simulateCall, fixedNumber, callContract, toPercent} from '../utils/'
 import Cookies from 'js-cookie'
 
 
@@ -130,8 +130,8 @@ export default {
 			return {
 				h: hList.length,
 				g: gList.length,
-				hp: fixedNumber(hList.length/voteList.length, 2)*100,
-				gp: fixedNumber(gList.length/voteList.length, 2)*100
+				hp: toPercent(hList.length/voteList.length, 2),
+				gp: toPercent(gList.length/voteList.length, 2)
 			}
 		},
 		
@@ -156,7 +156,7 @@ export default {
 			g = fixedNumber(g)
 			h = fixedNumber(h)
 
-			return {h, g, hp: fixedNumber(h/(h+g), 2)*100, gp:fixedNumber(g/(h+g), 2)*100}
+			return {h, g, hp:  toPercent(h/(h+g), 2), gp: toPercent(g/(h+g), 2)}
 		}
 
 	},

@@ -64,7 +64,7 @@ export default {
 </script>
 <style>
 .contract{
-	margin: 20px 0 20px;
+	margin: 20px 0 30px;
 	text-align: center;
 }
 </style>

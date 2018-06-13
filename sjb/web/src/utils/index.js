@@ -154,3 +154,9 @@ export function fixedNumber(num, fix=4){
   let fixNum = Math.pow(10, fix)
   return Math.round( num * fixNum )/fixNum
 }
+
+export function toPercent(num, fix=2){
+  num = num * 100
+  let fixNum = Math.pow(10, fix)
+  return Math.round( num * fixNum )/fixNum 
+}

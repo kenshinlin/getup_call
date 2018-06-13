@@ -129,7 +129,7 @@ div.ivu-card-head{padding: 6px 12px 4px;}
 div.ivu-card-body{padding: 6px;}
 div.ivu-timeline-item-content{padding-left: 19px;}
 table{border-spacing:0;}
-td, th{padding: 2px 0;}
+table td, th{padding: 2px 0;}
 .avatar{
   width: 30px;
   height: 30px;
@@ -184,7 +184,7 @@ div.ivu-modal-header{padding: 10px 12px;}
 div.ivu-form-item{margin-bottom: 12px;}
 div.ivu-card:hover{box-shadow: 0 1px 1px rgba(0,0,0,.2);}
 
-.ivu-timeline.ivu-timeline-pending .ivu-timeline-item:nth-last-of-type(2) .ivu-timeline-item-tail{
+ul.ivu-timeline.ivu-timeline-pending .ivu-timeline-item:nth-last-of-type(2) .ivu-timeline-item-tail{
   border-left: 1px dotted #ea3f33;
 }
 
